@@ -17,6 +17,8 @@ public class Alumno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Integer legajo;
+
     @Column(nullable = false)
     private String nombre;
 
