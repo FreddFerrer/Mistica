@@ -21,12 +21,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public UsuarioDTO crearUsuario(UsuarioRegisterRequest usuario) {
 
-        if (usuarioRepository.existsByEmailOrUsername(usuario.getEmail(), usuario.getUsername())) {
-            throw  new IllegalStateException("Error al crear el usuario");
-        }
-        Usuario nuevoUsuario = usuarioMapper.toDomain(usuario);
-        nuevoUsuario = usuarioRepository.save(nuevoUsuario);
-
-        return usuarioMapper.toDTO(nuevoUsuario);
+        return  null;
     }
 }
