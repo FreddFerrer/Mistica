@@ -15,9 +15,9 @@ public class TestController {
     }
 
     @GetMapping("/padre")
-    @PreAuthorize("hasRole('PADRE') or hasRole('ESTUDIANTE')")
+    @PreAuthorize("hasRole('ROLE_PADRE') or hasRole('ROLE_ESTUDIANTE')")
     public String padreAccess() {
-        return "Padre Content.";
+        return "Padre and estudiante Content.";
     }
 
     @GetMapping("/personal")

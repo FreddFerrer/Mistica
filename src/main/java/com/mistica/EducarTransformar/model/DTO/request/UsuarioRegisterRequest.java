@@ -1,6 +1,6 @@
 package com.mistica.EducarTransformar.model.DTO.request;
 
-import com.mistica.EducarTransformar.model.entity.Rol;
+import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -19,5 +19,5 @@ public class UsuarioRegisterRequest {
     private String nombre;
     @NotBlank
     private String apellido;
-    private Rol rol;
+    private RolUsuario rol;
 }

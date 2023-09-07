@@ -2,6 +2,7 @@ package com.mistica.EducarTransformar.security.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mistica.EducarTransformar.model.entity.Usuario;
+import com.mistica.EducarTransformar.security.CustomGrantedAuthority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -21,10 +22,9 @@ public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-
     private String username;
-
     private String email;
+    private String rolName;
 
     @JsonIgnore
     private String password;
@@ -32,30 +32,33 @@ public class UserDetailsImpl implements UserDetails {
     private GrantedAuthority authority;
 
     public UserDetailsImpl(Long id, String username, String email, String password,
-                           GrantedAuthority authority) {
+                           String rolName) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.authority = authority;
+        this.rolName = rolName;
     }
 
     public static UserDetailsImpl build(Usuario usuario) {
-        GrantedAuthority authority = (GrantedAuthority) usuario.getRol();
+        String rolName = usuario.getRol().name();
 
         return new UserDetailsImpl(
                 usuario.getId(),
                 usuario.getUsername(),
                 usuario.getEmail(),
                 usuario.getPassword(),
-                authority);
+                rolName);
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) authority;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(rolName));
+        return authorities;
     }
+
 
     @Override
     public String getPassword() {

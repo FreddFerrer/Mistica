@@ -34,9 +34,9 @@ public class Usuario {
     @NotBlank
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "rol_id")
-    private Rol rol;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private RolUsuario rol;
 
     @Column(nullable = false)
     @NotBlank
@@ -46,7 +46,7 @@ public class Usuario {
     @NotBlank
     private String apellido;
 
-    public Usuario(String username, String password, String email, Rol rol, String nombre, String apellido) {
+    public Usuario(String username, String password, String email, RolUsuario rol, String nombre, String apellido) {
         this.username = username;
         this.password = password;
         this.email = email;

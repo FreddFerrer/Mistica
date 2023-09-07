@@ -2,10 +2,8 @@ package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.model.DTO.request.UsuarioLoginRequest;
 import com.mistica.EducarTransformar.model.DTO.request.UsuarioRegisterRequest;
-import com.mistica.EducarTransformar.model.entity.Rol;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import com.mistica.EducarTransformar.model.entity.Usuario;
-import com.mistica.EducarTransformar.model.repository.IRolRepository;
 import com.mistica.EducarTransformar.model.repository.IUsuarioRepository;
 import com.mistica.EducarTransformar.payload.JwtResponse;
 import com.mistica.EducarTransformar.payload.MessageResponse;
@@ -36,9 +34,6 @@ public class AuthController {
     IUsuarioRepository userRepository;
 
     @Autowired
-    IRolRepository roleRepository;
-
-    @Autowired
     PasswordEncoder encoder;
 
     @Autowired
@@ -54,7 +49,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String rol = userDetails.getAuthorities().toString();
+        String rol = userDetails.getRolName();
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -88,16 +83,8 @@ public class AuthController {
                 );
 
         // Obtén el rol del objeto Rol proporcionado en la solicitud
-        Rol rolUsuario = registerRequest.getRol();
-
-        if (rolUsuario == null) {
-            Rol userRole = roleRepository.findByName(RolUsuario.ROLE_ESTUDIANTE)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            user.setRol(userRole);
-        } else {
-            // Si se proporciona un objeto Rol, asigna ese rol al usuario
-            user.setRol(rolUsuario);
-        }
+        RolUsuario rolUsuario = RolUsuario.valueOf(String.valueOf(registerRequest.getRol()));
+        user.setRol(rolUsuario);
 
         userRepository.save(user);
 
