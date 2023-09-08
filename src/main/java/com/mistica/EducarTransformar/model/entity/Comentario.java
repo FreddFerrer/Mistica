@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Entity
@@ -22,10 +23,10 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String nombre;
 
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     @Column(nullable = false, length = 1000) // Ajusta la longitud según tus necesidades
     private String contenido;
 

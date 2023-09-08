@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class Materia {
     private Long id;
 
     @Column(nullable = false)
+    @NotEmpty(message = "campo obligatorio")
     private String nombreMateria;
 
     @ManyToOne // Muchas materias pueden estar asociadas a un docente
@@ -25,6 +28,7 @@ public class Materia {
     private Usuario docente;
 
     @Column(nullable = false)
+    @NotEmpty(message = "campo obligatorio")
     private String anoEscolar;
 
     @ManyToMany(mappedBy = "materias")

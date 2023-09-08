@@ -4,20 +4,20 @@ import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Data
 public class UsuarioRegisterRequest {
-    @NotBlank
+    @NotEmpty(message = "campo username obligatorio")
     private String username;
-    @NotBlank
+    @NotEmpty(message = "campo email obligatorio")
     @Email
     private String email;
-    @NotBlank
+    @NotEmpty(message = "campo contraseña obligatorio")
     private String password;
-    @NotBlank
+    @NotEmpty(message = "campo nombre obligatorio")
     private String nombre;
-    @NotBlank
+    @NotEmpty(message = "campo apellido obligatorio")
     private String apellido;
     private RolUsuario rol;
 }

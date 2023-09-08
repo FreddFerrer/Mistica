@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 
 import java.util.Set;
@@ -22,16 +23,16 @@ public class Usuario {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String username;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String password;
 
     @Column(nullable = false, unique = true)
     @Email
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -39,11 +40,11 @@ public class Usuario {
     private RolUsuario rol;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String nombre;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotEmpty(message = "campo obligatorio")
     private String apellido;
 
     public Usuario(String username, String password, String email, RolUsuario rol, String nombre, String apellido) {
