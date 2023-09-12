@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IMateriaRepository extends JpaRepository<Materia, Long> {
+    Materia findByNombreMateria(String nombreMateria);
 }

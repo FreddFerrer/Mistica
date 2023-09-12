@@ -1,5 +1,6 @@
 package com.mistica.EducarTransformar.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +33,6 @@ public class Materia {
     private String anoEscolar;
 
     @ManyToMany(mappedBy = "materias")
+    @JsonIgnore
     private List<Alumno> alumnos = new ArrayList<>();
 }

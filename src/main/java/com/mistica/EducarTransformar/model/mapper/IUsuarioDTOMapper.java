@@ -11,9 +11,4 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface IUsuarioDTOMapper {
 
-    UsuarioDTO toDTO (Usuario usuario);
-
-    @InheritInverseConfiguration
-    Usuario toDomain (UsuarioRegisterRequest usuario);
-    Usuario toDomain (UsuarioLoginRequest usuario);
 }

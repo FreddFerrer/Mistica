@@ -1,15 +1,16 @@
 package com.mistica.EducarTransformar.model.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "asistencias")
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Asistencia {
 
     @Id
@@ -31,4 +32,9 @@ public class Asistencia {
     @Enumerated(EnumType.STRING) // Utilizar Enum como tipo de columna
     @Column(nullable = false)
     private EstadoAsistencia estado;
+
+    @PrePersist
+    public void prePersist() {
+        fechaAsistencia = new Date();
+    }
 }

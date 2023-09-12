@@ -1,15 +1,18 @@
 package com.mistica.EducarTransformar.model.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "califiaciones")
-@Getter
-@Setter
+@Table(name = "calificaciones")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Calificacion {
 
     @Id
@@ -24,9 +27,15 @@ public class Calificacion {
     @JoinColumn(name = "materia_id")
     private Materia materia;
 
-    private double calificacion;
+    @NotNull
+    private Double calificacion;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_calificacion")
     private Date fechaCalificacion;
+
+    @PrePersist
+    public void prePersist() {
+        fechaCalificacion = new Date();
+    }
 }
