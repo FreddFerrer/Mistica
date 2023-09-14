@@ -17,4 +17,5 @@ public interface IAlumnoDTOMapper {
     Alumno toDomain (AlumnoCreationRequestDTO alumnoDTO);
 
 
+    Alumno toDomain(AlumnoDTO alumnoDTO);
 }

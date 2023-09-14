@@ -20,6 +20,8 @@ public interface IAlumnoService {
 
     AlumnoDTO nuevoAlumno(AlumnoCreationRequestDTO alumno);
 
+    AlumnoDTO guardarAlumno(AlumnoDTO alumnoDTO);
+
     AlumnoDTO editarAlumno(Long id, AlumnoDTO alumno);
 
     void deleteAlumno(Long id);

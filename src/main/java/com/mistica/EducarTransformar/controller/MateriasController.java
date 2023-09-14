@@ -38,7 +38,7 @@ public class MateriasController {
 
     // Devuelve la lista de materias ingresando con el docente y autoridad
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE')")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE') or hasRole('ROLE_ESTUDIANTE')")
     public ResponseEntity<List<MateriaDTO>> getAllMaterias() {
         List<MateriaDTO> materias = materiaService.getAll();
         return ResponseEntity.ok(materias);

@@ -4,15 +4,18 @@ import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
+import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
+import com.mistica.EducarTransformar.model.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +29,10 @@ public class AlumnosController {
 
     @Autowired
     private IAlumnoService alumnoService;
+    @Autowired
+    private IUsuarioService usuarioService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private IAlumnoDTOMapper alumnoMapper;
@@ -41,10 +48,32 @@ public class AlumnosController {
     @PostMapping("/nuevo")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
     public ResponseEntity<AlumnoDTO> agregarAlumno(@Valid @RequestBody AlumnoCreationRequestDTO alumnoDTO) {
+
+
+        String contraseña = alumnoDTO.getNombre() + "alumno";
+        String usernameAlumno = alumnoDTO.getNombre() + "alumno";
+
+        String contraseñaCodificada = passwordEncoder.encode(contraseña);
+
+        // Crear un nuevo usuario alumno
+        Usuario nuevoUsuarioAlumno = new Usuario();
+        nuevoUsuarioAlumno.setNombre(alumnoDTO.getNombre());
+        nuevoUsuarioAlumno.setApellido(alumnoDTO.getApellido());
+        nuevoUsuarioAlumno.setEmail(alumnoDTO.getEmail());
+        nuevoUsuarioAlumno.setUsername(usernameAlumno);
+        nuevoUsuarioAlumno.setPassword(contraseñaCodificada);
+        nuevoUsuarioAlumno.setRol(RolUsuario.ROLE_ESTUDIANTE);
+
+        Usuario alumno = usuarioService.nuevoDocente(nuevoUsuarioAlumno);
+
         AlumnoDTO nuevoAlumno = alumnoService.nuevoAlumno(alumnoDTO);
         nuevoAlumno.setRol(RolUsuario.ROLE_ESTUDIANTE);
+        nuevoAlumno.setUsuario(nuevoUsuarioAlumno);
 
-        return ResponseEntity.ok(nuevoAlumno);
+        // Guardar el alumno en la base de datos
+        AlumnoDTO alumnoCreado = alumnoService.guardarAlumno(nuevoAlumno);
+
+        return ResponseEntity.ok(alumnoCreado);
     }
 
     // Devuelve un alumno en específico

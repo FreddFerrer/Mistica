@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AlumnoServiceImpl implements IAlumnoService {
@@ -92,6 +91,18 @@ public class AlumnoServiceImpl implements IAlumnoService {
         alumno.setLegajo(obtenerUltimoNumeroLegajo() + 1);
         Alumno nuevoAlumno = alumnoRepository.save(alumno);
         return alumnoMapper.toDTO(nuevoAlumno);
+    }
+
+    @Override
+    public AlumnoDTO guardarAlumno(AlumnoDTO alumnoDTO) {
+        // Convierte el DTO a la entidad Alumno
+        Alumno alumno = alumnoMapper.toDomain(alumnoDTO);
+
+        // Guarda el alumno en la base de datos
+        Alumno alumnoGuardado = alumnoRepository.save(alumno);
+
+        // Convierte la entidad Alumno de vuelta a DTO y devuelve
+        return alumnoMapper.toDTO(alumnoGuardado);
     }
 
     @Override

@@ -28,6 +28,11 @@ public class Alumno {
     @Column(nullable = false)
     private String apellido;
 
+    // Agregar relación OneToOne con Usuario
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    private Usuario usuario;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private RolUsuario rol;
@@ -49,4 +54,6 @@ public class Alumno {
     )
     @JsonIgnore
     private List<Materia> materias = new ArrayList<>();
+
+
 }
