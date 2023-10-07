@@ -16,7 +16,7 @@ public class AlumnoDTO {
     private RolUsuario rol;
     private List<CalificacionDTO> calificaciones;
     private List<AsistenciaDTO> asistencias;
-    private Usuario usuario;
+    private UsuarioDTO usuario;
 
 
 }

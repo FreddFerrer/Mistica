@@ -9,13 +9,14 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface IAlumnoDTOMapper {
     AlumnoDTO toDTO(Alumno alumno);
+    List<AlumnoDTO> toDTOs(List<Alumno> alumnos);
 
     @InheritInverseConfiguration
-    Alumno toDomain (AlumnoCreationRequestDTO alumnoDTO);
-
-
+    Alumno toDomain(AlumnoCreationRequestDTO alumnoDTO);
     Alumno toDomain(AlumnoDTO alumnoDTO);
 }

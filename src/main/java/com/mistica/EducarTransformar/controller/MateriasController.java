@@ -66,6 +66,7 @@ public class MateriasController {
     @PostMapping("/nueva")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
     public ResponseEntity<MateriaDTO> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
+
         // Utiliza el mapper para convertir el DTO de solicitud a la entidad Materia
         MateriaDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
 

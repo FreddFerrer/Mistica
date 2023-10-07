@@ -5,10 +5,7 @@ import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Alumno;
-import com.mistica.EducarTransformar.model.entity.Asistencia;
-import com.mistica.EducarTransformar.model.entity.Calificacion;
-import com.mistica.EducarTransformar.model.entity.Materia;
+import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IAsistenciaRepository;
@@ -22,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -46,38 +42,9 @@ public class AlumnoServiceImpl implements IAlumnoService {
     @Override
     public List<AlumnoDTO> obtenerAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
-        List<AlumnoDTO> alumnoDTOs = new ArrayList<>();
-
-        for (Alumno alumno : alumnos) {
-            AlumnoDTO alumnoDTO = alumnoMapper.toDTO(alumno);
-
-            // Mapear las calificaciones a CalificacionDTO
-            List<Calificacion> calificaciones = alumno.getCalificaciones();
-            List<CalificacionDTO> calificacionDTOs = new ArrayList<>();
-
-            for (Calificacion calificacion : calificaciones) {
-                CalificacionDTO calificacionDTO = new CalificacionDTO();
-                calificacionDTO.setId(calificacion.getId());
-
-                // Verificar si la materia es nula antes de acceder a sus propiedades
-                if (calificacion.getMateria() != null) {
-                    calificacionDTO.setNombreMateria(calificacion.getMateria().getNombreMateria());
-                } else {
-                    // Si la materia es nula, puedes manejarlo de alguna manera, por ejemplo, asignar un valor predeterminado.
-                    calificacionDTO.setNombreMateria("Materia Desconocida");
-                }
-
-                calificacionDTO.setCalificacion(calificacion.getCalificacion());
-                calificacionDTO.setFechaCalificacion(calificacion.getFechaCalificacion());
-                calificacionDTOs.add(calificacionDTO);
-            }
-
-            alumnoDTO.setCalificaciones(calificacionDTOs);
-            alumnoDTOs.add(alumnoDTO);
-        }
-
-        return alumnoDTOs;
+        return alumnoMapper.toDTOs(alumnos);
     }
+
 
     @Override
     public Optional<AlumnoDTO> getAlumno(Long id) {
@@ -86,17 +53,7 @@ public class AlumnoServiceImpl implements IAlumnoService {
     }
 
     @Override
-    public AlumnoDTO nuevoAlumno(AlumnoCreationRequestDTO alumnoDTO) {
-        Alumno alumno = alumnoMapper.toDomain(alumnoDTO);
-        alumno.setLegajo(obtenerUltimoNumeroLegajo() + 1);
-        Alumno nuevoAlumno = alumnoRepository.save(alumno);
-        return alumnoMapper.toDTO(nuevoAlumno);
-    }
-
-    @Override
-    public AlumnoDTO guardarAlumno(AlumnoDTO alumnoDTO) {
-        // Convierte el DTO a la entidad Alumno
-        Alumno alumno = alumnoMapper.toDomain(alumnoDTO);
+    public AlumnoDTO guardarAlumno(Alumno alumno) {
 
         // Guarda el alumno en la base de datos
         Alumno alumnoGuardado = alumnoRepository.save(alumno);

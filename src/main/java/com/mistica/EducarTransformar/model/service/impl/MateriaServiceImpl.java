@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,7 +46,8 @@ public class MateriaServiceImpl implements IMateriaService {
 
     @Override
     public MateriaDTO agregarMateria(MateriaCreationRequestDTO materiaDTO) {
-        Materia materia = materiaMapper.toEntity(materiaDTO); // Convierte el DTO en entidad
+
+        Materia materia = materiaMapper.toEntity(materiaDTO);
         Materia nuevaMateria = materiaRepository.save(materia);
         return materiaMapper.toDTO(nuevaMateria); // Convierte la entidad guardada en DTO
     }
@@ -59,7 +61,7 @@ public class MateriaServiceImpl implements IMateriaService {
 
             // Actualiza los campos de la materia con los nuevos valores del DTO
             materiaActualizada.setNombreMateria(nuevaMateriaDTO.getNombreMateria());
-            materiaActualizada.setDocente(nuevaMateriaDTO.getDocente());
+            //materiaActualizada.setDocente(nuevaMateriaDTO.getDocente());
             materiaActualizada.setAnoEscolar(nuevaMateriaDTO.getAnoEscolar());
             // Actualiza otros campos según sea necesario
 

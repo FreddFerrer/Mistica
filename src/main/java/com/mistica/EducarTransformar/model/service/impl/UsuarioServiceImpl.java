@@ -2,14 +2,12 @@ package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
-import com.mistica.EducarTransformar.model.DTO.request.UsuarioRegisterRequest;
 import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import com.mistica.EducarTransformar.model.entity.Usuario;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.repository.IUsuarioRepository;
-import com.mistica.EducarTransformar.model.service.IMateriaService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,11 +23,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private IMateriaRepository materiaRepository;
+    @Autowired
+    private IUsuarioDTOMapper usuarioDTOMapper;
 
 
     @Override
-    public List<Usuario> obtenerDocentes() {
-        return usuarioRepository.findByRol(RolUsuario.ROLE_DOCENTE);
+    public List<UsuarioDTO> obtenerDocentes() {
+        List<Usuario> docentes = usuarioRepository.findByRol(RolUsuario.ROLE_DOCENTE);
+        return usuarioDTOMapper.toDTOs(docentes);
     }
 
     @Override
@@ -38,8 +39,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public Usuario nuevoDocente(Usuario docente) {
-        return usuarioRepository.save(docente);
+    public Usuario nuevoUsuario(Usuario alumno) {
+        return usuarioRepository.save(alumno);
     }
 
     @Override
@@ -67,6 +68,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
+    public boolean existeUsuarioPorEmail(String email) {
+        boolean usuario = usuarioRepository.existsByEmail(email);
+        return usuario;
+    }
+
+    @Override
     public void deleteDocente(Long id) {
         usuarioRepository.deleteById(id);
     }
@@ -84,10 +91,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
             // Asignar el docente a la materia
             materia.setDocente(docente);
 
-            // Guardar la materia actualizada en la base de datos
+            // Guardar la materia actualizada
             materiaRepository.save(materia);
         } else {
-            // Manejo de error si la materia o el docente no se encuentran
+
             throw new NotFoundException("La materia o el docente solicitado no existen.");
         }
     }

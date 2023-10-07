@@ -8,6 +8,7 @@ import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
+import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class AlumnosController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private IAlumnoDTOMapper alumnoMapper;
+    private IUsuarioDTOMapper usuarioMapper;
 
     // Devuelve todos los alumnos, independientemente del rol
     @GetMapping
@@ -47,12 +48,16 @@ public class AlumnosController {
     // Crea un nuevo alumno solo accesible por el rol autoridad
     @PostMapping("/nuevo")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<AlumnoDTO> agregarAlumno(@Valid @RequestBody AlumnoCreationRequestDTO alumnoDTO) {
+    public ResponseEntity<?> agregarAlumno(@Valid @RequestBody AlumnoCreationRequestDTO alumnoDTO) {
 
+        if (usuarioService.existeUsuarioPorEmail(alumnoDTO.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("El correo electrónico ya está en uso");
+        }
 
         String contraseña = alumnoDTO.getNombre() + "alumno";
         String usernameAlumno = alumnoDTO.getNombre() + "alumno";
-
         String contraseñaCodificada = passwordEncoder.encode(contraseña);
 
         // Crear un nuevo usuario alumno
@@ -64,17 +69,24 @@ public class AlumnosController {
         nuevoUsuarioAlumno.setPassword(contraseñaCodificada);
         nuevoUsuarioAlumno.setRol(RolUsuario.ROLE_ESTUDIANTE);
 
-        Usuario alumno = usuarioService.nuevoDocente(nuevoUsuarioAlumno);
+        // Guardar el usuario en la base de datos
+        Usuario usuarioCreado = usuarioService.nuevoUsuario(nuevoUsuarioAlumno);
 
-        AlumnoDTO nuevoAlumno = alumnoService.nuevoAlumno(alumnoDTO);
+        // Crear un nuevo alumno y asociarlo al usuario
+        Alumno nuevoAlumno = new Alumno();
+        nuevoAlumno.setNombre(alumnoDTO.getNombre());
+        nuevoAlumno.setApellido(alumnoDTO.getApellido());
+        nuevoAlumno.setLegajo(alumnoService.obtenerUltimoNumeroLegajo() + 1);
         nuevoAlumno.setRol(RolUsuario.ROLE_ESTUDIANTE);
-        nuevoAlumno.setUsuario(nuevoUsuarioAlumno);
+        nuevoAlumno.setUsuario(usuarioCreado);
 
         // Guardar el alumno en la base de datos
-        AlumnoDTO alumnoCreado = alumnoService.guardarAlumno(nuevoAlumno);
+        alumnoService.guardarAlumno(nuevoAlumno);
 
-        return ResponseEntity.ok(alumnoCreado);
+        return ResponseEntity.ok(nuevoAlumno);
     }
+
+
 
     // Devuelve un alumno en específico
     @GetMapping("/{id}")

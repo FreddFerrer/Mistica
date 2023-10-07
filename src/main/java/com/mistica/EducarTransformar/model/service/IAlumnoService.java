@@ -4,6 +4,7 @@ import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
+import com.mistica.EducarTransformar.model.entity.Alumno;
 import com.mistica.EducarTransformar.model.entity.Asistencia;
 import com.mistica.EducarTransformar.model.entity.Calificacion;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +19,7 @@ public interface IAlumnoService {
 
     Optional<AlumnoDTO> getAlumno(Long id);
 
-    AlumnoDTO nuevoAlumno(AlumnoCreationRequestDTO alumno);
-
-    AlumnoDTO guardarAlumno(AlumnoDTO alumnoDTO);
+    AlumnoDTO guardarAlumno(Alumno alumno);
 
     AlumnoDTO editarAlumno(Long id, AlumnoDTO alumno);
 

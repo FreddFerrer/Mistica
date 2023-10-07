@@ -16,13 +16,8 @@ public interface IMateriaDTOMapper {
     @InheritInverseConfiguration
     Materia toDomain(MateriaDTO materiaDTO);
 
-    // Agrega un nuevo método para mapear desde el DTO de solicitud a la entidad Materia
-    @Mapping(target = "id", ignore = true) // Ignora el id, ya que es autogenerado
-    @Mapping(target = "nombreMateria", source = "nombreMateria")
-    @Mapping(target = "anoEscolar", source = "anoEscolar")
+    @Mapping(target = "id", ignore = true)
     Materia toEntity(MateriaCreationRequestDTO materiaCreateRequest);
 
-    // Agrega otro método para mapear desde el DTO de solicitud a la entidad Materia
-    @InheritInverseConfiguration
-    MateriaCreationRequestDTO toRequestDTO(Materia materia);
+
 }

@@ -1,6 +1,7 @@
 package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.DocenteCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Calificacion;
 import com.mistica.EducarTransformar.model.entity.Materia;
@@ -34,8 +35,8 @@ public class DocenteController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<List<Usuario>> getAllDocentes() {
-        List<Usuario> docentes = usuarioService.obtenerDocentes();
+    public ResponseEntity<List<UsuarioDTO>> getAllDocentes() {
+        List<UsuarioDTO> docentes = usuarioService.obtenerDocentes();
         return ResponseEntity.ok(docentes);
     }
 
@@ -62,6 +63,7 @@ public class DocenteController {
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
     public ResponseEntity<Usuario> agregarDocente(@Valid @RequestBody DocenteCreationRequestDTO docenteRequest) {
         // Generar la contraseña automáticamente
+        String usernameDocente = docenteRequest.getNombre() + "docente";
         String contraseña = docenteRequest.getNombre() + "docente";
 
         String contraseñaCodificada = passwordEncoder.encode(contraseña);
@@ -71,11 +73,11 @@ public class DocenteController {
         nuevoDocente.setNombre(docenteRequest.getNombre());
         nuevoDocente.setApellido(docenteRequest.getApellido());
         nuevoDocente.setEmail(docenteRequest.getEmail());
-        nuevoDocente.setUsername(docenteRequest.getUsername());
+        nuevoDocente.setUsername(usernameDocente);
         nuevoDocente.setPassword(contraseñaCodificada);
         nuevoDocente.setRol(RolUsuario.ROLE_DOCENTE);
 
-        Usuario docente = usuarioService.nuevoDocente(nuevoDocente);
+        Usuario docente = usuarioService.nuevoUsuario(nuevoDocente);
 
         return ResponseEntity.ok(docente);
     }

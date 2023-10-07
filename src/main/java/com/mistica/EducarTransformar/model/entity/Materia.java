@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,15 @@ public class Materia {
     @Column(nullable = false)
     @NotEmpty(message = "campo obligatorio")
     private String nombreMateria;
+
+    @Column(nullable = false)
+    private String turno;
+
+    @Column(nullable = false)
+    private LocalTime horarioEntrada;
+
+    @Column(nullable = false)
+    private LocalTime horarioSalida;
 
     @ManyToOne // Muchas materias pueden estar asociadas a un docente
     @JoinColumn(name = "docente_id")
