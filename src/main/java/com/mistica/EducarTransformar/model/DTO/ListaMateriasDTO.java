@@ -6,12 +6,13 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class MateriaDTO {
+public class ListaMateriasDTO {
     private String nombreMateria;
     private String turno;
     private LocalTime horarioEntrada;
     private LocalTime horarioSalida;
     private String anoEscolar;
-    private UsuarioDTO docente;
+    private List<AlumnoDTO> alumnos;
     private List<ParcialDTO> parciales;
+    private UsuarioDTO docente;
 }

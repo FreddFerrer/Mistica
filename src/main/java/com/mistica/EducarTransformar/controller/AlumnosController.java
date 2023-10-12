@@ -1,18 +1,15 @@
 package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
-import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
-import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,8 +37,8 @@ public class AlumnosController {
 
     // Devuelve todos los alumnos, independientemente del rol
     @GetMapping
-    public ResponseEntity<List<AlumnoDTO>> getAllAlumnos() {
-        List<AlumnoDTO> alumnos = alumnoService.obtenerAlumnos();
+    public ResponseEntity<List<ListaAlumnosDTO>> getAllAlumnos() {
+        List<ListaAlumnosDTO> alumnos = alumnoService.obtenerAlumnos();
         return ResponseEntity.ok(alumnos);
     }
 
@@ -90,8 +87,8 @@ public class AlumnosController {
 
     // Devuelve un alumno en específico
     @GetMapping("/{id}")
-    public ResponseEntity<AlumnoDTO> getAlumno(@PathVariable Long id) {
-        Optional<AlumnoDTO> alumno = alumnoService.getAlumno(id);
+    public ResponseEntity<ListaAlumnosDTO> getAlumno(@PathVariable Long id) {
+        Optional<ListaAlumnosDTO> alumno = alumnoService.getAlumno(id);
         return alumno.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -99,12 +96,12 @@ public class AlumnosController {
     // Edita un alumno
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<AlumnoDTO> editarAlumno(
+    public ResponseEntity<ListaAlumnosDTO> editarAlumno(
             @PathVariable Long id,
-            @RequestBody AlumnoDTO alumnoDTO
+            @RequestBody ListaAlumnosDTO listaAlumnosDTO
     ) {
         try {
-            AlumnoDTO alumnoActualizado = alumnoService.editarAlumno(id, alumnoDTO);
+            ListaAlumnosDTO alumnoActualizado = alumnoService.editarAlumno(id, listaAlumnosDTO);
             return ResponseEntity.ok(alumnoActualizado);
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();

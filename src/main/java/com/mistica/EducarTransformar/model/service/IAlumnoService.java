@@ -1,12 +1,9 @@
 package com.mistica.EducarTransformar.model.service;
 
-import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
-import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
-import com.mistica.EducarTransformar.model.entity.Asistencia;
-import com.mistica.EducarTransformar.model.entity.Calificacion;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,13 +12,13 @@ import java.util.Optional;
 public interface IAlumnoService {
 
 
-    List<AlumnoDTO> obtenerAlumnos();
+    List<ListaAlumnosDTO> obtenerAlumnos();
 
-    Optional<AlumnoDTO> getAlumno(Long id);
+    Optional<ListaAlumnosDTO> getAlumno(Long id);
 
-    AlumnoDTO guardarAlumno(Alumno alumno);
+    ListaAlumnosDTO guardarAlumno(Alumno alumno);
 
-    AlumnoDTO editarAlumno(Long id, AlumnoDTO alumno);
+    ListaAlumnosDTO editarAlumno(Long id, ListaAlumnosDTO alumno);
 
     void deleteAlumno(Long id);
 

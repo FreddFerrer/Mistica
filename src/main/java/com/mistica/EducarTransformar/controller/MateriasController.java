@@ -2,9 +2,8 @@ package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
-import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.ICalificacionService;
@@ -39,16 +38,16 @@ public class MateriasController {
     // Devuelve la lista de materias ingresando con el docente y autoridad
     @GetMapping
     @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE') or hasRole('ROLE_ESTUDIANTE')")
-    public ResponseEntity<List<MateriaDTO>> getAllMaterias() {
-        List<MateriaDTO> materias = materiaService.getAll();
+    public ResponseEntity<List<ListaMateriasDTO>> getAllMaterias() {
+        List<ListaMateriasDTO> materias = materiaService.getAll();
         return ResponseEntity.ok(materias);
     }
 
     // Devuelve una materia ingresando con el docente y autoridad
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<MateriaDTO> getMateria(@PathVariable Long id) throws ChangeSetPersister.NotFoundException {
-        Optional<MateriaDTO> materia = materiaService.getById(id);
+    public ResponseEntity<ListaMateriasDTO> getMateria(@PathVariable Long id) throws ChangeSetPersister.NotFoundException {
+        Optional<ListaMateriasDTO> materia = materiaService.getById(id);
         if (materia.isEmpty()) {
             throw new ChangeSetPersister.NotFoundException();
         }
@@ -65,10 +64,10 @@ public class MateriasController {
     // Agrega una materia (solo autoridad)
     @PostMapping("/nueva")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<MateriaDTO> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
+    public ResponseEntity<ListaMateriasDTO> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
 
         // Utiliza el mapper para convertir el DTO de solicitud a la entidad Materia
-        MateriaDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
+        ListaMateriasDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
 
         // Retorna la respuesta con la materia creada
         return ResponseEntity.ok(materiaCreada);

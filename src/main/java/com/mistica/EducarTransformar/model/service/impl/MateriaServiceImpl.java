@@ -1,7 +1,7 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
 import com.mistica.EducarTransformar.model.entity.Materia;
@@ -10,10 +10,8 @@ import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +29,7 @@ public class MateriaServiceImpl implements IMateriaService {
     private IMateriaRepository materiaRepository;
 
     @Override
-    public List<MateriaDTO> getAll() {
+    public List<ListaMateriasDTO> getAll() {
         List<Materia> materias = materiaRepository.findAll();
         return materias.stream()
                 .map(materiaMapper::toDTO) // Convertir cada entidad en DTO
@@ -39,13 +37,13 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public Optional<MateriaDTO> getById(Long id) {
+    public Optional<ListaMateriasDTO> getById(Long id) {
         Optional<Materia> materia = materiaRepository.findById(id);
         return materia.map(materiaMapper::toDTO); // Convertir la entidad en DTO si existe
     }
 
     @Override
-    public MateriaDTO agregarMateria(MateriaCreationRequestDTO materiaDTO) {
+    public ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materiaDTO) {
 
         Materia materia = materiaMapper.toEntity(materiaDTO);
         Materia nuevaMateria = materiaRepository.save(materia);
@@ -53,16 +51,16 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public MateriaDTO editarMateria(Long id, MateriaDTO nuevaMateriaDTO) {
+    public ListaMateriasDTO editarMateria(Long id, ListaMateriasDTO nuevaListaMateriasDTO) {
         Optional<Materia> materiaExistente = materiaRepository.findById(id);
 
         if (materiaExistente.isPresent()) {
             Materia materiaActualizada = materiaExistente.get();
 
             // Actualiza los campos de la materia con los nuevos valores del DTO
-            materiaActualizada.setNombreMateria(nuevaMateriaDTO.getNombreMateria());
+            materiaActualizada.setNombreMateria(nuevaListaMateriasDTO.getNombreMateria());
             //materiaActualizada.setDocente(nuevaMateriaDTO.getDocente());
-            materiaActualizada.setAnoEscolar(nuevaMateriaDTO.getAnoEscolar());
+            materiaActualizada.setAnoEscolar(nuevaListaMateriasDTO.getAnoEscolar());
             // Actualiza otros campos según sea necesario
 
             // Guarda la materia actualizada en la base de datos

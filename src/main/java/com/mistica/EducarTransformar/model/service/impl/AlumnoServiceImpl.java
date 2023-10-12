@@ -1,10 +1,9 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
-import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
@@ -40,20 +39,20 @@ public class AlumnoServiceImpl implements IAlumnoService {
     private EntityManager entityManager;
 
     @Override
-    public List<AlumnoDTO> obtenerAlumnos() {
+    public List<ListaAlumnosDTO> obtenerAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
         return alumnoMapper.toDTOs(alumnos);
     }
 
 
     @Override
-    public Optional<AlumnoDTO> getAlumno(Long id) {
+    public Optional<ListaAlumnosDTO> getAlumno(Long id) {
         Optional<Alumno> alumno = alumnoRepository.findById(id);
         return  alumno.map(alumnoMapper::toDTO);
     }
 
     @Override
-    public AlumnoDTO guardarAlumno(Alumno alumno) {
+    public ListaAlumnosDTO guardarAlumno(Alumno alumno) {
 
         // Guarda el alumno en la base de datos
         Alumno alumnoGuardado = alumnoRepository.save(alumno);
@@ -63,7 +62,7 @@ public class AlumnoServiceImpl implements IAlumnoService {
     }
 
     @Override
-    public AlumnoDTO editarAlumno(Long id, AlumnoDTO alumnoDTO) {
+    public ListaAlumnosDTO editarAlumno(Long id, ListaAlumnosDTO listaAlumnosDTO) {
         // Primero, verifica si el alumno existe
         Optional<Alumno> alumnoExistente = alumnoRepository.findById(id);
 
@@ -71,8 +70,8 @@ public class AlumnoServiceImpl implements IAlumnoService {
             Alumno alumnoActualizado = alumnoExistente.get();
 
             // Actualiza los campos del alumno con los nuevos valores
-            alumnoActualizado.setNombre(alumnoDTO.getNombre());
-            alumnoActualizado.setApellido(alumnoDTO.getApellido());
+            alumnoActualizado.setNombre(listaAlumnosDTO.getNombre());
+            alumnoActualizado.setApellido(listaAlumnosDTO.getApellido());
             // Actualiza otros campos según sea necesario
 
             // Guarda el alumno actualizado en la base de datos

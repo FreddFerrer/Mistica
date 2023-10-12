@@ -1,6 +1,7 @@
 package com.mistica.EducarTransformar.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,4 +46,8 @@ public class Materia {
     @ManyToMany(mappedBy = "materias")
     @JsonIgnore
     private List<Alumno> alumnos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "materia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("materia")
+    private List<Parcial> parciales = new ArrayList<>();
 }
