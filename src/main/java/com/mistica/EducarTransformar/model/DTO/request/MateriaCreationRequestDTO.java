@@ -3,6 +3,8 @@ package com.mistica.EducarTransformar.model.DTO.request;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 
 @Data
 public class MateriaCreationRequestDTO {
@@ -16,9 +18,9 @@ public class MateriaCreationRequestDTO {
     @NotEmpty(message = "El campo turno es obligatorio")
     private String turno;
 
-    @NotEmpty(message = "El horario de entrada es obligatorio")
-    private String horarioEntrada;
+    @NotNull(message = "El horario de entrada es obligatorio")
+    private LocalTime horarioEntrada;
 
-    @NotEmpty(message = "El horario de salida es obligatorio")
-    private String horarioSalida;
+    @NotNull(message = "El horario de salida es obligatorio")
+    private LocalTime horarioSalida;
 }

@@ -3,7 +3,6 @@ package com.mistica.EducarTransformar.controller;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
-import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
@@ -116,17 +115,6 @@ public class AlumnosController {
     public ResponseEntity<?> borrarAlumno(@PathVariable Long id) {
         alumnoService.deleteAlumno(id);
         return ResponseEntity.ok("Alumno eliminado exitosamente.");
-    }
-
-    // Calificar a un alumno
-    @PostMapping("/{alumnoId}/agregar-calificacion/{materiaId}")
-    @PreAuthorize("hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<?> agregarCalificacion(
-            @PathVariable Long alumnoId,
-            @PathVariable Long materiaId,
-            @RequestBody CalificacionDTO calificacionDTO) {
-        alumnoService.establecerCalificacion(alumnoId,materiaId, calificacionDTO);
-        return ResponseEntity.ok("Calificación agregada exitosamente.");
     }
 
     // Poner asistencia a un alumno

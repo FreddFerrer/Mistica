@@ -1,10 +1,13 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.DocenteDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaDocentesDTO;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import com.mistica.EducarTransformar.model.entity.Usuario;
+import com.mistica.EducarTransformar.model.mapper.IDocenteDTOMapper;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.repository.IUsuarioRepository;
@@ -25,12 +28,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private IMateriaRepository materiaRepository;
     @Autowired
     private IUsuarioDTOMapper usuarioDTOMapper;
+    @Autowired
+    private IDocenteDTOMapper docenteDTOMapper;
 
 
     @Override
-    public List<UsuarioDTO> obtenerDocentes() {
+    public List<ListaDocentesDTO> obtenerDocentes() {
         List<Usuario> docentes = usuarioRepository.findByRol(RolUsuario.ROLE_DOCENTE);
-        return usuarioDTOMapper.toDTOs(docentes);
+        return docenteDTOMapper.toDTOList(docentes);
     }
 
     @Override

@@ -14,5 +14,5 @@ public class ListaMateriasDTO {
     private String anoEscolar;
     private List<AlumnoDTO> alumnos;
     private List<ParcialDTO> parciales;
-    private UsuarioDTO docente;
+    private DocenteDTO docente;
 }

@@ -39,10 +39,4 @@ public class Parcial {
     @Column(name = "nombre_alumno")
     private String nombreAlumno;
 
-    // Otros campos necesarios según tus requerimientos
-
-    @PrePersist
-    public void prePersist() {
-        fechaParcial = new Date();
-    }
 }

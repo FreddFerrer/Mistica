@@ -1,16 +1,24 @@
 package com.mistica.EducarTransformar.model.service;
 
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
+import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
+import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IMateriaService {
     List<ListaMateriasDTO> getAll();
+
+    List<MateriaDTO> getMateriasAsignadasAlDocente(Long docenteId);
     Optional<ListaMateriasDTO> getById(Long id);
     ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materia);
     ListaMateriasDTO editarMateria(Long id, ListaMateriasDTO listaMateriasDTO);
     void deleteMateria(Long id);
     void agregarAlumnoAMateria(Long materiaId, Long alumnoId);
+
+    void crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcial);
+
+    List<MateriaDTO> getAllByDocente(Long idDocente);
 }

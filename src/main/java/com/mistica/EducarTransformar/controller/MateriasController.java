@@ -1,22 +1,34 @@
 package com.mistica.EducarTransformar.controller;
 
+import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
+import com.mistica.EducarTransformar.common.handler.EmptyField;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
+import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
+import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
+import com.mistica.EducarTransformar.model.entity.Usuario;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.ICalificacionService;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
+import com.mistica.EducarTransformar.security.jwt.JwtUtils;
+import com.mistica.EducarTransformar.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +43,10 @@ public class MateriasController {
     @Autowired
     private IMateriaDTOMapper materiaDTOMapper;
     @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
     private IMateriaService materiaService;
     @Autowired
     private ICalificacionService calificacionService;
@@ -42,6 +58,20 @@ public class MateriasController {
         List<ListaMateriasDTO> materias = materiaService.getAll();
         return ResponseEntity.ok(materias);
     }
+
+    @GetMapping("/materiasPorDocente")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE') or hasRole('ROLE_ESTUDIANTE')")
+    public ResponseEntity<List<MateriaDTO>> getMateriasPorDocente(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long idDocente = userDetails.getId();
+
+        // Luego, puedes usar el ID del docente para filtrar las materias, por ejemplo:
+        List<MateriaDTO> materias = materiaService.getAllByDocente(idDocente);
+
+        return ResponseEntity.ok(materias);
+    }
+
+
 
     // Devuelve una materia ingresando con el docente y autoridad
     @GetMapping("/{id}")
@@ -64,18 +94,20 @@ public class MateriasController {
     // Agrega una materia (solo autoridad)
     @PostMapping("/nueva")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<ListaMateriasDTO> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
+    public ResponseEntity<?> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
 
-        // Utiliza el mapper para convertir el DTO de solicitud a la entidad Materia
-        ListaMateriasDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
+        try{
+            ListaMateriasDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
+            return ResponseEntity.ok(materiaCreada);
+        }catch(EmptyField e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos vacios");
+        }
 
-        // Retorna la respuesta con la materia creada
-        return ResponseEntity.ok(materiaCreada);
     }
 
     @PostMapping("/{materiaId}/agregar-alumno/{alumnoId}")
     @PreAuthorize("hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<String> agregarAlumnoAMateria(
+    public ResponseEntity<?> agregarAlumnoAMateria(
             @PathVariable Long materiaId,
             @PathVariable Long alumnoId
     ) {
@@ -85,13 +117,23 @@ public class MateriasController {
         } catch (NotFoundException e) {
             // Manejo de la excepción si la materia o el alumno no se encuentran
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (ElementAlreadyInException e) {
+            // Manejo de la excepción si el alumno ya está asociado a la materia
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    @GetMapping("/{materiaId}/calificaciones")
-    public ResponseEntity<List<CalificacionDTO>> obtenerCalificacionesPorMateria(
-            @PathVariable Long materiaId) {
-        List<CalificacionDTO> calificaciones = calificacionService.obtenerCalificacionesPorMateria(materiaId);
-        return ResponseEntity.ok(calificaciones);
+    @PostMapping("/{materiaId}/parcial")
+    @PreAuthorize("hasRole('ROLE_DOCENTE')")
+    public ResponseEntity<String> crearParcialParaMateria(
+            @PathVariable Long materiaId,
+            @RequestBody @Valid ParcialCreationRequestDTO parcialDTO
+    ) {
+        try {
+            materiaService.crearParcialParaMateria(materiaId, parcialDTO);
+            return ResponseEntity.ok("Parcial creado exitosamente.");
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

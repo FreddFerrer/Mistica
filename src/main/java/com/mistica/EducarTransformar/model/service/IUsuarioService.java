@@ -1,5 +1,7 @@
 package com.mistica.EducarTransformar.model.service;
 
+import com.mistica.EducarTransformar.model.DTO.DocenteDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaDocentesDTO;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.entity.Usuario;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
 
 public interface IUsuarioService {
 
-    List<UsuarioDTO> obtenerDocentes();
+    List<ListaDocentesDTO> obtenerDocentes();
 
     Optional<Usuario> getDocente(Long id);
 

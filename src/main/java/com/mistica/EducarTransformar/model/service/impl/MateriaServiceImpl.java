@@ -1,15 +1,21 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
+
+import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
+import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
+import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
 import com.mistica.EducarTransformar.model.entity.Materia;
+import com.mistica.EducarTransformar.model.entity.Parcial;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +26,7 @@ import java.util.stream.Collectors;
 public class MateriaServiceImpl implements IMateriaService {
 
     @Autowired
-    private IMateriaDTOMapper materiaMapper; // Tu mapper de Materia
+    private IMateriaDTOMapper materiaMapper;
 
     @Autowired
     private IAlumnoRepository alumnoRepository;
@@ -32,14 +38,22 @@ public class MateriaServiceImpl implements IMateriaService {
     public List<ListaMateriasDTO> getAll() {
         List<Materia> materias = materiaRepository.findAll();
         return materias.stream()
-                .map(materiaMapper::toDTO) // Convertir cada entidad en DTO
+                .map(materiaMapper::toDTOList) // Convertir cada entidad en DTO
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MateriaDTO> getMateriasAsignadasAlDocente(Long docenteId) {
+        List<Materia> materiasAsignadas = materiaRepository.findByDocenteId(docenteId);
+        return materiasAsignadas.stream()
+                .map(materiaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ListaMateriasDTO> getById(Long id) {
         Optional<Materia> materia = materiaRepository.findById(id);
-        return materia.map(materiaMapper::toDTO); // Convertir la entidad en DTO si existe
+        return materia.map(materiaMapper::toDTOList); // Convertir la entidad en DTO si existe
     }
 
     @Override
@@ -47,7 +61,7 @@ public class MateriaServiceImpl implements IMateriaService {
 
         Materia materia = materiaMapper.toEntity(materiaDTO);
         Materia nuevaMateria = materiaRepository.save(materia);
-        return materiaMapper.toDTO(nuevaMateria); // Convierte la entidad guardada en DTO
+        return materiaMapper.toDTOList(nuevaMateria); // Convierte la entidad guardada en DTO
     }
 
     @Override
@@ -65,7 +79,7 @@ public class MateriaServiceImpl implements IMateriaService {
 
             // Guarda la materia actualizada en la base de datos
             Materia materiaGuardada = materiaRepository.save(materiaActualizada);
-            return materiaMapper.toDTO(materiaGuardada); // Convierte la entidad guardada en DTO
+            return materiaMapper.toDTOList(materiaGuardada);
         } else {
             // Manejo de error si la materia no se encuentra
             throw new NotFoundException("La materia solicitada no existe.");
@@ -86,16 +100,49 @@ public class MateriaServiceImpl implements IMateriaService {
             Materia materia = materiaOptional.get();
             Alumno alumno = alumnoOptional.get();
 
-            // Asocia al alumno con la materia
-            materia.getAlumnos().add(alumno);
-            alumno.getMaterias().add(materia);
+            // Verificar si el alumno ya está asociado a la materia
+            if (!materia.getAlumnos().contains(alumno)) {
+                // Asocia al alumno con la materia
+                materia.getAlumnos().add(alumno);
+                alumno.getMaterias().add(materia);
 
-            // Guarda los cambios en la base de datos
-            materiaRepository.save(materia);
-            alumnoRepository.save(alumno);
+                // Guarda los cambios en la base de datos
+                materiaRepository.save(materia);
+                alumnoRepository.save(alumno);
+            } else {
+                throw new ElementAlreadyInException("El alumno ya esta asociado a la materia");
+            }
         } else {
-            // Manejo de error si la materia o el alumno no se encuentran
             throw new NotFoundException("Materia o Alumno no encontrado.");
         }
+    }
+
+    @Override
+    public void crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcial) {
+        Optional<Materia> materiaOptional = materiaRepository.findById(materiaId);
+
+        if (materiaOptional.isPresent()) {
+            Materia materia = materiaOptional.get();
+
+            // Crea un nuevo parcial
+            Parcial nuevoParcial = new Parcial();
+            nuevoParcial.setMateria(materia);
+            nuevoParcial.setFechaParcial(parcial.getFechaParcial());
+
+            materia.getParciales().add(nuevoParcial);
+
+            materiaRepository.save(materia);
+        } else {
+            throw new NotFoundException("Materia no encontrada.");
+        }
+    }
+
+    @Override
+    public List<MateriaDTO> getAllByDocente(Long docenteId) {
+        List<Materia> materias = materiaRepository.findAllByDocenteId(docenteId);
+
+        return materias.stream()
+                .map(materiaMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -1,10 +1,10 @@
 package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.DocenteDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaDocentesDTO;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.DocenteCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Calificacion;
-import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import com.mistica.EducarTransformar.model.entity.Usuario;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
@@ -35,8 +35,8 @@ public class DocenteController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<List<UsuarioDTO>> getAllDocentes() {
-        List<UsuarioDTO> docentes = usuarioService.obtenerDocentes();
+    public ResponseEntity<List<ListaDocentesDTO>> getAllDocentes() {
+        List<ListaDocentesDTO> docentes = usuarioService.obtenerDocentes();
         return ResponseEntity.ok(docentes);
     }
 

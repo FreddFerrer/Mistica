@@ -2,7 +2,6 @@ package com.mistica.EducarTransformar.model.service;
 
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
-import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +23,6 @@ public interface IAlumnoService {
 
     Integer obtenerUltimoNumeroLegajo();
 
-    @Transactional
-    void establecerCalificacion(Long alumnoId, Long id, CalificacionDTO calificacionDTO);
 
     @Transactional
     void establecerAsistencia(Long alumnoId, Long id, AsistenciaDTO asistenciaDTO);

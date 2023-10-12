@@ -37,10 +37,6 @@ public class Alumno {
     @Column(length = 20)
     private RolUsuario rol;
 
-    @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("alumno")
-    private List<Calificacion> calificaciones = new ArrayList<>();
-
 
     @JsonIgnore@OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("alumno")

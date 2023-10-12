@@ -6,6 +6,5 @@ import java.util.Date;
 
 @Data
 public class ParcialDTO {
-    private Double calificacion;
     private Date fechaParcial;
 }

@@ -14,7 +14,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(Exception ex) {
         // Crear un objeto de respuesta personalizado con el mensaje de error
-        CustomErrorResponse errorResponse = new CustomErrorResponse(HttpStatus.FORBIDDEN, "Acceso denegado: No tienes permiso para acceder a este recurso.");
+        CustomErrorResponse errorResponse = new CustomErrorResponse(HttpStatus.FORBIDDEN, "Access Denegado: No tienes permiso para acceder a este recurso.");
 
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
@@ -23,8 +23,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException(Exception ex) {
         // Crear un objeto de respuesta personalizado con el mensaje de error
         CustomErrorResponse errorResponse = new CustomErrorResponse(HttpStatus.NOT_FOUND, "Recurso no encontrado: La materia solicitada no existe.");
-
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ElementAlreadyInException.class)
+    public ResponseEntity<Object> handleAlumnoAlreadyInMateriaException(Exception ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(HttpStatus.CONFLICT, "El elemento ya existe");
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EmptyField.class)
+    public ResponseEntity<Object> handleEmptyField(Exception ex){
+        CustomErrorResponse errorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, "Campos vacios");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
