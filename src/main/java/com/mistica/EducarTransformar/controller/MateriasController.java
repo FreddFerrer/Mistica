@@ -3,10 +3,15 @@ package com.mistica.EducarTransformar.controller;
 import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.EmptyField;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
+import com.mistica.EducarTransformar.model.DTO.ParcialDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
+import com.mistica.EducarTransformar.model.entity.Alumno;
+import com.mistica.EducarTransformar.model.entity.Materia;
+import com.mistica.EducarTransformar.model.entity.Parcial;
 import com.mistica.EducarTransformar.model.entity.Usuario;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
@@ -65,7 +70,6 @@ public class MateriasController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long idDocente = userDetails.getId();
 
-        // Luego, puedes usar el ID del docente para filtrar las materias, por ejemplo:
         List<MateriaDTO> materias = materiaService.getAllByDocente(idDocente);
 
         return ResponseEntity.ok(materias);
@@ -136,4 +140,24 @@ public class MateriasController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+
+    @PostMapping("/{parcialId}/calificaciones/alumno/{alumnoId}")
+    @PreAuthorize("hasRole('ROLE_DOCENTE')")
+    public ResponseEntity<?> setCalificacionForAlumno(
+            @PathVariable Long parcialId,
+            @PathVariable Long alumnoId,
+            @RequestBody CalificacionDTO calificacionDTO) {
+
+        materiaService.setCalificacionForAlumno(parcialId, alumnoId, calificacionDTO);
+        return ResponseEntity.ok("Calificación establecida correctamente.");
+    }
+
+    @DeleteMapping("/parcial/{id}")
+    @PreAuthorize("hasRole('ROLE_DOCENTE')")
+    public ResponseEntity<?> borrarParcial(@PathVariable Long id) {
+        materiaService.deleteParcial(id);
+        return ResponseEntity.ok("Parcial eliminado exitosamente.");
+    }
+
 }

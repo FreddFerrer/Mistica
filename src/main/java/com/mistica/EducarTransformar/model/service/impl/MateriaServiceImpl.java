@@ -3,21 +3,27 @@ package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
+import com.mistica.EducarTransformar.model.DTO.ParcialDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
+import com.mistica.EducarTransformar.model.entity.Calificacion;
 import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.Parcial;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
+import com.mistica.EducarTransformar.model.mapper.IParcialDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
+import com.mistica.EducarTransformar.model.repository.IParcialRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,9 +33,13 @@ public class MateriaServiceImpl implements IMateriaService {
 
     @Autowired
     private IMateriaDTOMapper materiaMapper;
+    @Autowired
+    private IParcialDTOMapper parcialMapper;
 
     @Autowired
     private IAlumnoRepository alumnoRepository;
+    @Autowired
+    private IParcialRepository parcialRepository;
 
     @Autowired
     private IMateriaRepository materiaRepository;
@@ -37,8 +47,14 @@ public class MateriaServiceImpl implements IMateriaService {
     @Override
     public List<ListaMateriasDTO> getAll() {
         List<Materia> materias = materiaRepository.findAll();
+
+        // Itera sobre las materias y obtén la lista de alumnos antes del mapeo
         return materias.stream()
-                .map(materiaMapper::toDTOList) // Convertir cada entidad en DTO
+                .peek(materia -> {
+                    List<Alumno> alumnosDeMateria = materia.getAlumnos();
+                    // Realiza operaciones con la lista de alumnos si es necesario
+                })
+                .map(materiaMapper::toDTOList) // Convierte cada entidad en DTO
                 .collect(Collectors.toList());
     }
 
@@ -118,23 +134,28 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public void crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcial) {
-        Optional<Materia> materiaOptional = materiaRepository.findById(materiaId);
+    public ParcialDTO crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcialRequest) {
+        Materia materia = materiaRepository.findById(materiaId)
+                .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
 
-        if (materiaOptional.isPresent()) {
-            Materia materia = materiaOptional.get();
+        Parcial parcial = new Parcial();
+        parcial.setMateria(materia);
+        parcial.setFechaParcial(parcialRequest.getFechaParcial());
 
-            // Crea un nuevo parcial
-            Parcial nuevoParcial = new Parcial();
-            nuevoParcial.setMateria(materia);
-            nuevoParcial.setFechaParcial(parcial.getFechaParcial());
-
-            materia.getParciales().add(nuevoParcial);
-
-            materiaRepository.save(materia);
-        } else {
-            throw new NotFoundException("Materia no encontrada.");
+        List<Calificacion> calificaciones = new ArrayList<>();
+        for (Alumno alumno : materia.getAlumnos()) {
+            Calificacion calificacion = new Calificacion();
+            calificacion.setAlumno(alumno);
+            calificacion.setParcial(parcial);
+            calificacion.setCalificacion(null);
+            calificaciones.add(calificacion);
         }
+
+        parcial.setCalificaciones(calificaciones);
+
+        Parcial parcialCreado = parcialRepository.save(parcial);
+
+        return parcialMapper.toDTO(parcialCreado);
     }
 
     @Override
@@ -144,5 +165,36 @@ public class MateriaServiceImpl implements IMateriaService {
         return materias.stream()
                 .map(materiaMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setCalificacionForAlumno(Long parcialId, Long alumnoId, CalificacionDTO calificacionDTO) {
+        Parcial parcial = parcialRepository.findById(parcialId).orElseThrow(() -> new NotFoundException(parcialId.toString()));
+        Alumno alumno = alumnoRepository.findById(alumnoId).orElseThrow(() -> new NotFoundException(alumnoId.toString()));
+
+        // Asegúrate de validar que el parcial y el alumno están relacionados
+        if (!contieneAlumno((List<Alumno>) parcial.getAlumno(), alumno)) {
+            throw new NotFoundException("No se relacionan");
+        }
+
+        // Actualiza la calificación del alumno en el parcial
+        parcial.setCalificacionForAlumno(alumno, calificacionDTO.getCalificacion());
+
+        // Guarda el parcial actualizado en la base de datos
+        parcialRepository.save(parcial);
+    }
+
+    @Override
+    public void deleteParcial(Long id) {
+        parcialRepository.deleteById(id);
+    }
+
+    public boolean contieneAlumno(List<Alumno> alumnos, Alumno alumno) {
+        for (Alumno a : alumnos) {
+            if (a.getId().equals(alumno.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
