@@ -167,34 +167,4 @@ public class MateriaServiceImpl implements IMateriaService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void setCalificacionForAlumno(Long parcialId, Long alumnoId, CalificacionDTO calificacionDTO) {
-        Parcial parcial = parcialRepository.findById(parcialId).orElseThrow(() -> new NotFoundException(parcialId.toString()));
-        Alumno alumno = alumnoRepository.findById(alumnoId).orElseThrow(() -> new NotFoundException(alumnoId.toString()));
-
-        // Asegúrate de validar que el parcial y el alumno están relacionados
-        if (!contieneAlumno((List<Alumno>) parcial.getAlumno(), alumno)) {
-            throw new NotFoundException("No se relacionan");
-        }
-
-        // Actualiza la calificación del alumno en el parcial
-        parcial.setCalificacionForAlumno(alumno, calificacionDTO.getCalificacion());
-
-        // Guarda el parcial actualizado en la base de datos
-        parcialRepository.save(parcial);
-    }
-
-    @Override
-    public void deleteParcial(Long id) {
-        parcialRepository.deleteById(id);
-    }
-
-    public boolean contieneAlumno(List<Alumno> alumnos, Alumno alumno) {
-        for (Alumno a : alumnos) {
-            if (a.getId().equals(alumno.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

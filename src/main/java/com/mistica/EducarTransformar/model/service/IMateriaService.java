@@ -25,7 +25,4 @@ public interface IMateriaService {
 
     List<MateriaDTO> getAllByDocente(Long idDocente);
 
-    void setCalificacionForAlumno(Long parcialId, Long alumnoId, CalificacionDTO calificacionDTO);
-
-    void deleteParcial(Long id);
 }

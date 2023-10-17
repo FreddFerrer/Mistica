@@ -55,4 +55,10 @@ public class Alumno {
     @JsonIgnoreProperties("alumno")
     private List<Parcial> parciales = new ArrayList<>();
 
+    @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("alumno")
+    private List<Pago> pagos = new ArrayList<>();
+
+    private boolean activo;
+
 }

@@ -3,10 +3,12 @@ package com.mistica.EducarTransformar.controller;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
+import com.mistica.EducarTransformar.model.DTO.ListaPagosDTO;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
+import com.mistica.EducarTransformar.model.service.IPagoService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,8 @@ public class AlumnosController {
     private IUsuarioService usuarioService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IPagoService pagoService;
 
     @Autowired
     private IUsuarioDTOMapper usuarioMapper;
@@ -126,5 +130,12 @@ public class AlumnosController {
             @RequestBody AsistenciaDTO asistenciaDTO) {
         alumnoService.establecerAsistencia(alumnoId, materiaId, asistenciaDTO);
         return ResponseEntity.ok("Asistencia agregada exitosamente.");
+    }
+
+    @GetMapping("/pagos")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
+    public ResponseEntity<List<ListaPagosDTO>> verTodosLosPagos(){
+        List<ListaPagosDTO> pagos = pagoService.getAll();
+        return ResponseEntity.ok(pagos);
     }
 }

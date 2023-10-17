@@ -3,21 +3,12 @@ package com.mistica.EducarTransformar.controller;
 import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.EmptyField;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
-import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
-import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
-import com.mistica.EducarTransformar.model.DTO.ParcialDTO;
+import com.mistica.EducarTransformar.model.DTO.*;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Alumno;
-import com.mistica.EducarTransformar.model.entity.Materia;
-import com.mistica.EducarTransformar.model.entity.Parcial;
-import com.mistica.EducarTransformar.model.entity.Usuario;
+import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
-import com.mistica.EducarTransformar.model.service.IAlumnoService;
-import com.mistica.EducarTransformar.model.service.ICalificacionService;
-import com.mistica.EducarTransformar.model.service.IMateriaService;
-import com.mistica.EducarTransformar.model.service.IUsuarioService;
+import com.mistica.EducarTransformar.model.service.*;
 import com.mistica.EducarTransformar.security.jwt.JwtUtils;
 import com.mistica.EducarTransformar.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -55,6 +43,8 @@ public class MateriasController {
     private IMateriaService materiaService;
     @Autowired
     private ICalificacionService calificacionService;
+    @Autowired
+    private IPagoService pagoService;
 
     // Devuelve la lista de materias ingresando con el docente y autoridad
     @GetMapping
@@ -141,23 +131,20 @@ public class MateriasController {
         }
     }
 
-
-    @PostMapping("/{parcialId}/calificaciones/alumno/{alumnoId}")
-    @PreAuthorize("hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<?> setCalificacionForAlumno(
-            @PathVariable Long parcialId,
+    @PostMapping("/realizar-pago/{alumnoId}")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
+    public ResponseEntity<?> realizarPago(
             @PathVariable Long alumnoId,
-            @RequestBody CalificacionDTO calificacionDTO) {
-
-        materiaService.setCalificacionForAlumno(parcialId, alumnoId, calificacionDTO);
-        return ResponseEntity.ok("Calificación establecida correctamente.");
+            @RequestBody Map<String, Double> requestBody
+    ) {
+        Double monto = requestBody.get("monto");
+        ResponseEntity<?> response = pagoService.realizarPago(alumnoId, monto);
+        return response;
     }
 
-    @DeleteMapping("/parcial/{id}")
-    @PreAuthorize("hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<?> borrarParcial(@PathVariable Long id) {
-        materiaService.deleteParcial(id);
-        return ResponseEntity.ok("Parcial eliminado exitosamente.");
-    }
+
+
+
+
 
 }

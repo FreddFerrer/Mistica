@@ -26,4 +26,5 @@ public interface IAlumnoService {
 
     @Transactional
     void establecerAsistencia(Long alumnoId, Long id, AsistenciaDTO asistenciaDTO);
+
 }
