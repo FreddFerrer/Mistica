@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class ListaMateriasDTO {
+    private Long id;
     private String nombreMateria;
     private String turno;
     private LocalTime horarioEntrada;

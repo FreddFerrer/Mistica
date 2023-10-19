@@ -4,7 +4,6 @@ import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaPagosDTO;
 import com.mistica.EducarTransformar.model.DTO.PagoDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
-import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.Pago;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.mapper.IPagoDTOMapper;
@@ -89,5 +88,13 @@ public class IPagoServiceImpl implements IPagoService {
                 .collect(Collectors.toList());
     }
 
-
+    @Override
+    public List<ListaPagosDTO> getAllPagosByAlumnoId(Long alumnoId) {
+        alumnoId = alumnoRepository.findAlumnoIdByUsuarioId(alumnoId);
+        List<Pago> pagos = pagoRepository.findAllByAlumnoId(alumnoId);
+        System.out.println(("ID del alumno: {}"+ alumnoId));
+        return pagos.stream()
+                .map(pagosMapper::toDTOList)
+                .collect(Collectors.toList());
+    }
 }

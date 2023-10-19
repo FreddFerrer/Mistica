@@ -56,12 +56,22 @@ public class MateriasController {
 
     @GetMapping("/materiasPorDocente")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD') or hasRole('ROLE_DOCENTE') or hasRole('ROLE_ESTUDIANTE')")
-    public ResponseEntity<List<MateriaDTO>> getMateriasPorDocente(Authentication authentication) {
+    public ResponseEntity<List<ListaMateriasDTO>> getMateriasPorDocente(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long idDocente = userDetails.getId();
 
-        List<MateriaDTO> materias = materiaService.getAllByDocente(idDocente);
+        List<ListaMateriasDTO> materias = materiaService.getAllByDocente(idDocente);
 
+        return ResponseEntity.ok(materias);
+    }
+
+    @GetMapping("/materiasPorAlumno")
+    @PreAuthorize("hasRole('ROLE_ESTUDIANTE')")
+    public ResponseEntity<List<MateriaDTO>> getAllMateriasByAlumno(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long alumnoId = userDetails.getId();
+
+        List<MateriaDTO> materias = materiaService.getAllMateriasByAlumnoId(alumnoId);
         return ResponseEntity.ok(materias);
     }
 
@@ -130,21 +140,4 @@ public class MateriasController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-    @PostMapping("/realizar-pago/{alumnoId}")
-    @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
-    public ResponseEntity<?> realizarPago(
-            @PathVariable Long alumnoId,
-            @RequestBody Map<String, Double> requestBody
-    ) {
-        Double monto = requestBody.get("monto");
-        ResponseEntity<?> response = pagoService.realizarPago(alumnoId, monto);
-        return response;
-    }
-
-
-
-
-
-
 }

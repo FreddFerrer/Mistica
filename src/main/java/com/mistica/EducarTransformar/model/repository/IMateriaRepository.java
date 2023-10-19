@@ -13,4 +13,6 @@ public interface IMateriaRepository extends JpaRepository<Materia, Long> {
     List<Materia> findByDocenteId(Long docenteId);
 
     List<Materia> findAllByDocenteId(Long docenteId);
+
+    List<Materia> findAllByAlumnosId(Long docenteId);
 }

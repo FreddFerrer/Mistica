@@ -1,24 +1,25 @@
 package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
-import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
-import com.mistica.EducarTransformar.model.DTO.ListaPagosDTO;
+import com.mistica.EducarTransformar.model.DTO.*;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.IPagoService;
 import com.mistica.EducarTransformar.model.service.IUsuarioService;
+import com.mistica.EducarTransformar.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -137,5 +138,26 @@ public class AlumnosController {
     public ResponseEntity<List<ListaPagosDTO>> verTodosLosPagos(){
         List<ListaPagosDTO> pagos = pagoService.getAll();
         return ResponseEntity.ok(pagos);
+    }
+
+    @GetMapping("/pagosPorAlumno")
+    @PreAuthorize("hasRole('ROLE_ESTUDIANTE')")
+    public ResponseEntity<List<ListaPagosDTO>> getAllPagosByAlumno(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long alumnoId = userDetails.getId();
+
+        List<ListaPagosDTO> pagos = pagoService.getAllPagosByAlumnoId(alumnoId);
+        return ResponseEntity.ok(pagos);
+    }
+
+    @PostMapping("/realizar-pago/{alumnoId}")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
+    public ResponseEntity<?> realizarPago(
+            @PathVariable Long alumnoId,
+            @RequestBody Map<String, Double> requestBody
+    ) {
+        Double monto = requestBody.get("monto");
+        ResponseEntity<?> response = pagoService.realizarPago(alumnoId, monto);
+        return response;
     }
 }

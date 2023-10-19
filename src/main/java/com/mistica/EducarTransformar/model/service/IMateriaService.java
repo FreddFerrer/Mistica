@@ -23,6 +23,7 @@ public interface IMateriaService {
 
     ParcialDTO crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcial);
 
-    List<MateriaDTO> getAllByDocente(Long idDocente);
+    List<ListaMateriasDTO> getAllByDocente(Long idDocente);
 
+    List<MateriaDTO> getAllMateriasByAlumnoId(Long alumnoId);
 }

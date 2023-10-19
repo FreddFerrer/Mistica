@@ -3,16 +3,12 @@ package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.CalificacionDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.ParcialDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Alumno;
-import com.mistica.EducarTransformar.model.entity.Calificacion;
-import com.mistica.EducarTransformar.model.entity.Materia;
-import com.mistica.EducarTransformar.model.entity.Parcial;
+import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.mapper.IParcialDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
@@ -20,7 +16,6 @@ import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.repository.IParcialRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -159,9 +154,19 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public List<MateriaDTO> getAllByDocente(Long docenteId) {
+    public List<ListaMateriasDTO> getAllByDocente(Long docenteId) {
         List<Materia> materias = materiaRepository.findAllByDocenteId(docenteId);
 
+        return materias.stream()
+                .map(materiaMapper::toDTOList)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MateriaDTO> getAllMateriasByAlumnoId(Long alumnoId) {
+        alumnoId = alumnoRepository.findAlumnoIdByUsuarioId(alumnoId);
+        List<Materia> materias = materiaRepository.findAllByAlumnosId(alumnoId);
+        System.out.println(("ID del alumno: {}"+ alumnoId));
         return materias.stream()
                 .map(materiaMapper::toDTO)
                 .collect(Collectors.toList());
