@@ -4,6 +4,7 @@ import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.*;
 import com.mistica.EducarTransformar.model.DTO.request.AlumnoCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
+import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.mapper.IUsuarioDTOMapper;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import com.mistica.EducarTransformar.model.service.IPagoService;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +40,8 @@ public class AlumnosController {
 
     @Autowired
     private IUsuarioDTOMapper usuarioMapper;
+    @Autowired
+    private IAlumnoDTOMapper alumnoDTOMapper;
 
     // Devuelve todos los alumnos, independientemente del rol
     @GetMapping
@@ -159,5 +163,11 @@ public class AlumnosController {
         Double monto = requestBody.get("monto");
         ResponseEntity<?> response = pagoService.realizarPago(alumnoId, monto);
         return response;
+    }
+
+    @GetMapping("/relacion")
+    public ResponseEntity<List<AlumnoExamenDTO>> obtenerRelacionAlumnoExamen() {
+        List<AlumnoExamenDTO> relacionAlumnoExamen = alumnoService.obtenerRelacionAlumnoExamen();
+        return new ResponseEntity<>(relacionAlumnoExamen, HttpStatus.OK);
     }
 }

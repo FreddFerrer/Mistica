@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class ListaDocentesDTO {
+    private Long id;
     private String username;
     private String email;
     private String nombre;

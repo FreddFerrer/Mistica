@@ -5,20 +5,17 @@ import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
-import com.mistica.EducarTransformar.model.DTO.ParcialDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
-import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
-import com.mistica.EducarTransformar.model.mapper.IParcialDTOMapper;
+import com.mistica.EducarTransformar.model.repository.IAlumnoExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
+import com.mistica.EducarTransformar.model.repository.IExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
-import com.mistica.EducarTransformar.model.repository.IParcialRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,15 +26,14 @@ public class MateriaServiceImpl implements IMateriaService {
     @Autowired
     private IMateriaDTOMapper materiaMapper;
     @Autowired
-    private IParcialDTOMapper parcialMapper;
-
-    @Autowired
     private IAlumnoRepository alumnoRepository;
-    @Autowired
-    private IParcialRepository parcialRepository;
 
     @Autowired
     private IMateriaRepository materiaRepository;
+    @Autowired
+    private IExamenRepository examenRepository;
+    @Autowired
+    private IAlumnoExamenRepository alumnoExamenRepository;
 
     @Override
     public List<ListaMateriasDTO> getAll() {
@@ -129,36 +125,11 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public ParcialDTO crearParcialParaMateria(Long materiaId, ParcialCreationRequestDTO parcialRequest) {
-        Materia materia = materiaRepository.findById(materiaId)
-                .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
-
-        Parcial parcial = new Parcial();
-        parcial.setMateria(materia);
-        parcial.setFechaParcial(parcialRequest.getFechaParcial());
-
-        List<Calificacion> calificaciones = new ArrayList<>();
-        for (Alumno alumno : materia.getAlumnos()) {
-            Calificacion calificacion = new Calificacion();
-            calificacion.setAlumno(alumno);
-            calificacion.setParcial(parcial);
-            calificacion.setCalificacion(null);
-            calificaciones.add(calificacion);
-        }
-
-        parcial.setCalificaciones(calificaciones);
-
-        Parcial parcialCreado = parcialRepository.save(parcial);
-
-        return parcialMapper.toDTO(parcialCreado);
-    }
-
-    @Override
     public List<ListaMateriasDTO> getAllByDocente(Long docenteId) {
         List<Materia> materias = materiaRepository.findAllByDocenteId(docenteId);
 
         return materias.stream()
-                .map(materiaMapper::toDTOList)
+                .map(materia -> materiaMapper.toDTOWithAlumnos(materia, materia.getAlumnos()))
                 .collect(Collectors.toList());
     }
 
@@ -171,5 +142,31 @@ public class MateriaServiceImpl implements IMateriaService {
                 .map(materiaMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void crearExamenEnMateria(Long materiaId, Examen examen) {
+        Materia materia = materiaRepository.findById(materiaId)
+                .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
+
+        // Asocia el examen con la materia
+        examen.setMateria(materia);
+
+        // Guarda el examen en la base de datos para obtener su ID
+        examenRepository.save(examen);
+
+        // Obtén la lista de alumnos de la materia
+        List<Alumno> alumnos = materia.getAlumnos();
+
+        // Asocia el examen con cada alumno a través de la entidad AlumnoExamen
+        for (Alumno alumno : alumnos) {
+            AlumnoExamen alumnoExamen = new AlumnoExamen();
+            alumnoExamen.setAlumno(alumno);
+            alumnoExamen.setExamen(examen);
+            alumnoExamen.setCalificacion(null);
+            alumnoExamenRepository.save(alumnoExamen);
+        }
+    }
+
+
 
 }

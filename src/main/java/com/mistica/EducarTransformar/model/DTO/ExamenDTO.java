@@ -2,8 +2,11 @@ package com.mistica.EducarTransformar.model.DTO;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
-public class CalificacionDTO {
-    private AlumnoDTO alumno;
+public class ExamenDTO {
+    private Long id;
+    private Date fecha;
     private Double calificacion;
 }

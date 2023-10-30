@@ -28,7 +28,6 @@ public class Alumno {
     @Column(nullable = false)
     private String apellido;
 
-    // Agregar relación OneToOne con Usuario
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
@@ -51,9 +50,10 @@ public class Alumno {
     @JsonIgnore
     private List<Materia> materias = new ArrayList<>();
 
-    @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "alumno")
     @JsonIgnoreProperties("alumno")
-    private List<Parcial> parciales = new ArrayList<>();
+    private List<AlumnoExamen> alumnoExamenes = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("alumno")

@@ -2,11 +2,11 @@ package com.mistica.EducarTransformar.controller;
 
 import com.mistica.EducarTransformar.common.handler.ElementAlreadyInException;
 import com.mistica.EducarTransformar.common.handler.EmptyField;
+import com.mistica.EducarTransformar.common.handler.InvalidHorarioException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.*;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
-import com.mistica.EducarTransformar.model.DTO.request.ParcialCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.*;
+import com.mistica.EducarTransformar.model.entity.Examen;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.service.*;
 import com.mistica.EducarTransformar.security.jwt.JwtUtils;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -41,8 +40,6 @@ public class MateriasController {
     private JwtUtils jwtUtils;
     @Autowired
     private IMateriaService materiaService;
-    @Autowired
-    private ICalificacionService calificacionService;
     @Autowired
     private IPagoService pagoService;
 
@@ -100,11 +97,18 @@ public class MateriasController {
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
     public ResponseEntity<?> agregarMateria(@Valid @RequestBody MateriaCreationRequestDTO nuevaMateriaRequestDTO) {
 
-        try{
+        try {
+            if (nuevaMateriaRequestDTO.getHorarioSalida().isBefore(nuevaMateriaRequestDTO.getHorarioEntrada())) {
+
+                throw new InvalidHorarioException("El horario de salida debe ser posterior al horario de entrada.");
+            }
+
             ListaMateriasDTO materiaCreada = materiaService.agregarMateria(nuevaMateriaRequestDTO);
             return ResponseEntity.ok(materiaCreada);
-        }catch(EmptyField e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos vacios");
+        } catch (EmptyField e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos vacíos");
+        } catch (InvalidHorarioException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }
@@ -127,17 +131,15 @@ public class MateriasController {
         }
     }
 
-    @PostMapping("/{materiaId}/parcial")
+    @PostMapping("/materias/{materiaId}/examenes")
     @PreAuthorize("hasRole('ROLE_DOCENTE')")
-    public ResponseEntity<String> crearParcialParaMateria(
+    public ResponseEntity<?> crearExamenEnMateria(
             @PathVariable Long materiaId,
-            @RequestBody @Valid ParcialCreationRequestDTO parcialDTO
+            @RequestBody Examen examen
     ) {
-        try {
-            materiaService.crearParcialParaMateria(materiaId, parcialDTO);
-            return ResponseEntity.ok("Parcial creado exitosamente.");
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        materiaService.crearExamenEnMateria(materiaId, examen);
+        return ResponseEntity.ok("Examen creado en la materia y asociado con los alumnos.");
     }
+
+
 }

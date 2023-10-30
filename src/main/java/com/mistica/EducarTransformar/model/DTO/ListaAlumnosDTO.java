@@ -1,5 +1,6 @@
 package com.mistica.EducarTransformar.model.DTO;
 
+import com.mistica.EducarTransformar.model.entity.AlumnoExamen;
 import com.mistica.EducarTransformar.model.entity.Pago;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import lombok.Data;

@@ -1,10 +1,12 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.AlumnoExamenDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
+import com.mistica.EducarTransformar.model.repository.IAlumnoExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IAsistenciaRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
@@ -19,6 +21,7 @@ import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AlumnoServiceImpl implements IAlumnoService {
@@ -31,6 +34,9 @@ public class AlumnoServiceImpl implements IAlumnoService {
     private IAsistenciaRepository asistenciaRepository;
     @Autowired
     private IAlumnoDTOMapper alumnoMapper;
+    @Autowired
+    private IAlumnoExamenRepository alumnoExamenRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -59,7 +65,6 @@ public class AlumnoServiceImpl implements IAlumnoService {
 
     @Override
     public ListaAlumnosDTO editarAlumno(Long id, ListaAlumnosDTO listaAlumnosDTO) {
-        // Primero, verifica si el alumno existe
         Optional<Alumno> alumnoExistente = alumnoRepository.findById(id);
 
         if (alumnoExistente.isPresent()) {
@@ -108,6 +113,20 @@ public class AlumnoServiceImpl implements IAlumnoService {
         asistencia.setEstado(asistenciaDTO.getEstado());
 
         asistenciaRepository.save(asistencia);
+    }
+
+    @Override
+    public List<AlumnoExamenDTO> obtenerRelacionAlumnoExamen() {
+        List<AlumnoExamen> alumnoExamenes = alumnoExamenRepository.findAll();
+
+        return alumnoExamenes.stream()
+                .map(alumnoExamen -> new AlumnoExamenDTO(
+                        alumnoExamen.getAlumno().getId(),
+                        alumnoExamen.getAlumno().getNombre() + " " + alumnoExamen.getAlumno().getApellido(),
+                        alumnoExamen.getExamen().getId(),
+                        alumnoExamen.getCalificacion()
+                ))
+                .collect(Collectors.toList());
     }
 
 }

@@ -13,6 +13,4 @@ public class MateriaDTO {
     private LocalTime horarioSalida;
     private String anoEscolar;
     private DocenteDTO docente;
-    //private List<AlumnoDTO> alumnos;
-    private List<ParcialDTO> parciales;
 }
