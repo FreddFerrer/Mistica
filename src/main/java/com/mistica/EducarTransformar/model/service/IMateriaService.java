@@ -3,7 +3,7 @@ package com.mistica.EducarTransformar.model.service;
 import com.mistica.EducarTransformar.model.DTO.ListaMateriasDTO;
 import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
-import com.mistica.EducarTransformar.model.entity.Examen;
+import com.mistica.EducarTransformar.model.entity.Materia;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +13,7 @@ public interface IMateriaService {
 
     List<MateriaDTO> getMateriasAsignadasAlDocente(Long docenteId);
     Optional<ListaMateriasDTO> getById(Long id);
+    Optional<Materia> getById2(Long id);
     ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materia);
     ListaMateriasDTO editarMateria(Long id, ListaMateriasDTO listaMateriasDTO);
     void deleteMateria(Long id);
@@ -22,5 +23,5 @@ public interface IMateriaService {
 
     List<MateriaDTO> getAllMateriasByAlumnoId(Long alumnoId);
 
-    void crearExamenEnMateria(Long materiaId, Examen examen);
+    Optional<Materia> obtenerMateriaPorId(Long materiaId);
 }

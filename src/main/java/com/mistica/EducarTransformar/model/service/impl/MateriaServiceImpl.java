@@ -8,9 +8,7 @@ import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
-import com.mistica.EducarTransformar.model.repository.IAlumnoExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
-import com.mistica.EducarTransformar.model.repository.IExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.service.IMateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +28,6 @@ public class MateriaServiceImpl implements IMateriaService {
 
     @Autowired
     private IMateriaRepository materiaRepository;
-    @Autowired
-    private IExamenRepository examenRepository;
-    @Autowired
-    private IAlumnoExamenRepository alumnoExamenRepository;
 
     @Override
     public List<ListaMateriasDTO> getAll() {
@@ -61,6 +55,12 @@ public class MateriaServiceImpl implements IMateriaService {
     public Optional<ListaMateriasDTO> getById(Long id) {
         Optional<Materia> materia = materiaRepository.findById(id);
         return materia.map(materiaMapper::toDTOList); // Convertir la entidad en DTO si existe
+    }
+
+    @Override
+    public Optional<Materia> getById2(Long id) {
+        Optional<Materia> materia = materiaRepository.findById(id);
+        return materia;
     }
 
     @Override
@@ -144,29 +144,9 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public void crearExamenEnMateria(Long materiaId, Examen examen) {
+    public Optional<Materia> obtenerMateriaPorId(Long materiaId) {
         Materia materia = materiaRepository.findById(materiaId)
-                .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
-
-        // Asocia el examen con la materia
-        examen.setMateria(materia);
-
-        // Guarda el examen en la base de datos para obtener su ID
-        examenRepository.save(examen);
-
-        // Obtén la lista de alumnos de la materia
-        List<Alumno> alumnos = materia.getAlumnos();
-
-        // Asocia el examen con cada alumno a través de la entidad AlumnoExamen
-        for (Alumno alumno : alumnos) {
-            AlumnoExamen alumnoExamen = new AlumnoExamen();
-            alumnoExamen.setAlumno(alumno);
-            alumnoExamen.setExamen(examen);
-            alumnoExamen.setCalificacion(null);
-            alumnoExamenRepository.save(alumnoExamen);
-        }
+                .orElseThrow(() -> new NotFoundException("Alumno no encontrado"));;
+        return Optional.ofNullable(materia);
     }
-
-
-
 }

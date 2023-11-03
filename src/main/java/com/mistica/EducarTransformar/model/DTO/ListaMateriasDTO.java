@@ -20,4 +20,5 @@ public class ListaMateriasDTO {
 
     private String anoEscolar;
     private DocenteDTO docente;
+    private List<AlumnoDTO> alumnos;
 }

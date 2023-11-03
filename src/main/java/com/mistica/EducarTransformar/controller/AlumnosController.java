@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -163,11 +162,5 @@ public class AlumnosController {
         Double monto = requestBody.get("monto");
         ResponseEntity<?> response = pagoService.realizarPago(alumnoId, monto);
         return response;
-    }
-
-    @GetMapping("/relacion")
-    public ResponseEntity<List<AlumnoExamenDTO>> obtenerRelacionAlumnoExamen() {
-        List<AlumnoExamenDTO> relacionAlumnoExamen = alumnoService.obtenerRelacionAlumnoExamen();
-        return new ResponseEntity<>(relacionAlumnoExamen, HttpStatus.OK);
     }
 }

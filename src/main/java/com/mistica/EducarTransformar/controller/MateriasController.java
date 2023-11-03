@@ -5,7 +5,9 @@ import com.mistica.EducarTransformar.common.handler.EmptyField;
 import com.mistica.EducarTransformar.common.handler.InvalidHorarioException;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.*;
+import com.mistica.EducarTransformar.model.DTO.request.ExamenCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
+import com.mistica.EducarTransformar.model.entity.Calificacion;
 import com.mistica.EducarTransformar.model.entity.Examen;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
 import com.mistica.EducarTransformar.model.service.*;
@@ -40,6 +42,8 @@ public class MateriasController {
     private JwtUtils jwtUtils;
     @Autowired
     private IMateriaService materiaService;
+    @Autowired
+    private IExamenService examenService;
     @Autowired
     private IPagoService pagoService;
 
@@ -114,7 +118,7 @@ public class MateriasController {
     }
 
     @PostMapping("/{materiaId}/agregar-alumno/{alumnoId}")
-    @PreAuthorize("hasRole('ROLE_DOCENTE')")
+    @PreAuthorize("hasRole('ROLE_AUTORIDAD')")
     public ResponseEntity<?> agregarAlumnoAMateria(
             @PathVariable Long materiaId,
             @PathVariable Long alumnoId
@@ -131,15 +135,64 @@ public class MateriasController {
         }
     }
 
-    @PostMapping("/materias/{materiaId}/examenes")
+    @PostMapping("/nuevoExamen/{materiaId}")
     @PreAuthorize("hasRole('ROLE_DOCENTE')")
     public ResponseEntity<?> crearExamenEnMateria(
             @PathVariable Long materiaId,
-            @RequestBody Examen examen
-    ) {
-        materiaService.crearExamenEnMateria(materiaId, examen);
-        return ResponseEntity.ok("Examen creado en la materia y asociado con los alumnos.");
+            @RequestBody ExamenCreationRequestDTO examenDTO) {
+
+        Examen examenCreado = examenService.crearExamenEnMateria(
+                examenDTO.getNombre(),
+                examenDTO.getFecha(),
+                materiaId
+        );
+
+        if (examenCreado != null) {
+            return ResponseEntity.ok("Examen creado exitosamente.");
+        } else {
+            return ResponseEntity.badRequest().body("No se pudo crear el examen. La materia no existe.");
+        }
     }
+
+    @GetMapping("/obtener-id/{alumnoId}/{examenId}")
+    public ResponseEntity<?> obtenerIdCalificacion(
+            @PathVariable Long alumnoId,
+            @PathVariable Long examenId
+    ) {
+        Long calificacionId = examenService.obtenerIdCalificacionPorAlumnoYExamen(alumnoId, examenId);
+
+        System.out.println(calificacionId);
+
+        if (calificacionId != null) {
+            return new ResponseEntity<>(calificacionId, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/setear-calificacion/{examenId}/alumno/{alumnoId}")
+    public ResponseEntity<?> calificarAlumno(
+            @PathVariable Long examenId,
+            @PathVariable Long alumnoId,
+            @RequestBody Double nota
+
+    ) {
+        System.out.println("examenId: " + examenId);
+        System.out.println("alumnoId: " + alumnoId);
+        System.out.println("nota: " + nota);
+
+        Optional<CalificacionDTO> calificacion = examenService.setearCalificacion(alumnoId, examenId, nota);
+
+        System.out.println(calificacion);
+
+        if (calificacion.isPresent()) {
+            return new ResponseEntity<>(calificacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No se pudo establecer la calificación.", HttpStatus.NOT_FOUND);
+        }
+
+    }
+
 
 
 }

@@ -1,12 +1,10 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
-import com.mistica.EducarTransformar.model.DTO.AlumnoExamenDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
-import com.mistica.EducarTransformar.model.repository.IAlumnoExamenRepository;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IAsistenciaRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
@@ -34,8 +32,6 @@ public class AlumnoServiceImpl implements IAlumnoService {
     private IAsistenciaRepository asistenciaRepository;
     @Autowired
     private IAlumnoDTOMapper alumnoMapper;
-    @Autowired
-    private IAlumnoExamenRepository alumnoExamenRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -115,18 +111,6 @@ public class AlumnoServiceImpl implements IAlumnoService {
         asistenciaRepository.save(asistencia);
     }
 
-    @Override
-    public List<AlumnoExamenDTO> obtenerRelacionAlumnoExamen() {
-        List<AlumnoExamen> alumnoExamenes = alumnoExamenRepository.findAll();
 
-        return alumnoExamenes.stream()
-                .map(alumnoExamen -> new AlumnoExamenDTO(
-                        alumnoExamen.getAlumno().getId(),
-                        alumnoExamen.getAlumno().getNombre() + " " + alumnoExamen.getAlumno().getApellido(),
-                        alumnoExamen.getExamen().getId(),
-                        alumnoExamen.getCalificacion()
-                ))
-                .collect(Collectors.toList());
-    }
 
 }

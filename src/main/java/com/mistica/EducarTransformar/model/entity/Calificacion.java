@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "alumno_examenes")
+@Table(name = "calificaciones")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlumnoExamen {
+public class Calificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,9 +22,9 @@ public class AlumnoExamen {
     @JoinColumn(name = "alumno_id")
     private Alumno alumno;
 
-    @ManyToOne
-    @JoinColumn(name = "examen_id")
-    private Examen examen;
+    private Double nota;
 
-    private Double calificacion;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "examen_id", referencedColumnName = "id")
+    private Examen examen;
 }

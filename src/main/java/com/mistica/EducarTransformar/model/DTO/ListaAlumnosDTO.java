@@ -1,7 +1,6 @@
 package com.mistica.EducarTransformar.model.DTO;
 
-import com.mistica.EducarTransformar.model.entity.AlumnoExamen;
-import com.mistica.EducarTransformar.model.entity.Pago;
+
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import lombok.Data;
 
@@ -17,4 +16,5 @@ public class ListaAlumnosDTO {
     private UsuarioDTO usuario;
     private List<MateriaDTO> materias;
     private List<PagoDTO> pagos;
+    private List<ExamenDTO> examenes;
 }

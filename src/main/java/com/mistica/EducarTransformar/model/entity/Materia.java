@@ -34,7 +34,7 @@ public class Materia {
     @Column(nullable = false)
     private LocalTime horarioSalida;
 
-    @ManyToOne // Muchas materias pueden estar asociadas a un docente
+    @ManyToOne
     @JoinColumn(name = "docente_id")
     private Usuario docente;
 
