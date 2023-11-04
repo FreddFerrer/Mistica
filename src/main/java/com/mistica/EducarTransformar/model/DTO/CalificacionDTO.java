@@ -1,11 +1,12 @@
 package com.mistica.EducarTransformar.model.DTO;
 
-import com.mistica.EducarTransformar.model.entity.Alumno;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class CalificacionDTO {
     private Long id;
-    private Alumno alumno;
+    private AlumnoDTO alumno;
     private Double nota;
+    private ExamenDTO examen;
 }

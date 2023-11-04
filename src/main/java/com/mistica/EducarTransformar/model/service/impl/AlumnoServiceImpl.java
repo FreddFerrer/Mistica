@@ -1,6 +1,7 @@
 package com.mistica.EducarTransformar.model.service.impl;
 
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
+import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.entity.*;
@@ -19,7 +20,6 @@ import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AlumnoServiceImpl implements IAlumnoService {
@@ -109,6 +109,13 @@ public class AlumnoServiceImpl implements IAlumnoService {
         asistencia.setEstado(asistenciaDTO.getEstado());
 
         asistenciaRepository.save(asistencia);
+    }
+
+    @Override
+    public List<AlumnoDTO> obtenerAlumnosPorMateria(Long materiaId) {
+        List<Alumno> alumno =  alumnoRepository.findAlumnosByMateriaId(materiaId);
+
+        return alumnoMapper.toDTOsingular(alumno);
     }
 
 

@@ -1,6 +1,7 @@
 package com.mistica.EducarTransformar.model.service;
 
 
+import com.mistica.EducarTransformar.model.DTO.AlumnoDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaAlumnosDTO;
 import com.mistica.EducarTransformar.model.DTO.AsistenciaDTO;
 import com.mistica.EducarTransformar.model.entity.Alumno;
@@ -23,9 +24,9 @@ public interface IAlumnoService {
     void deleteAlumno(Long id);
 
     Integer obtenerUltimoNumeroLegajo();
-
-
     @Transactional
     void establecerAsistencia(Long alumnoId, Long id, AsistenciaDTO asistenciaDTO);
 
+
+    List<AlumnoDTO> obtenerAlumnosPorMateria(Long materiaId);
 }

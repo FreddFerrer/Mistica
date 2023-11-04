@@ -38,36 +38,6 @@ public class ExamenServiceImpl implements IExamenService {
     @Autowired
     private IExamenDTOMapper examenDTOMapper;
 
-    @Override
-    public ExamenDTO crearExamenEnMateria(String nombreExamen, Long materiaId) {
-
-        Materia materia = materiaRepository.findById(materiaId)
-                .orElseThrow(() -> new NotFoundException("Alumno no encontrado"));
-
-        // Crea un nuevo examen
-        Examen examen = new Examen();
-        examen.setNombre(nombreExamen);
-        examen.setFecha(new Date());
-        examen.setMateria(materia);
-
-        // Guarda el examen
-        examenRepository.save(examen);
-
-        // Asigna el examen a todos los alumnos de la materia
-        materia.getAlumnos().forEach(alumno -> {
-            Calificacion calificacion = new Calificacion();
-            calificacion.setExamen(examen);
-            calificacion.setAlumno(alumno);
-            calificacion.setNota(null);
-
-            // Guarda la calificación
-            calificacionRepository.save(calificacion);
-        });
-
-        return examenDTOMapper.toDTO(examen);
-    }
-
-
 
     @Override
     public Optional<Examen> obtenerById(Long materiaId) {
@@ -78,7 +48,7 @@ public class ExamenServiceImpl implements IExamenService {
     @Override
     public Examen crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId) {
         Materia materia = materiaService.obtenerMateriaPorId(materiaId)
-                .orElseThrow(() -> new NotFoundException("Alumno no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
 
         if (materia != null) {
             Examen examen = new Examen();
@@ -90,7 +60,7 @@ public class ExamenServiceImpl implements IExamenService {
             for (Alumno alumno : materia.getAlumnos()) {
                 Calificacion calificacion = new Calificacion();
                 calificacion.setAlumno(alumno);
-                calificacion.setNota(null);
+                calificacion.setNota((double) 0);
                 calificacion.setExamen(examen);
                 calificaciones.add(calificacion);
             }
@@ -106,15 +76,14 @@ public class ExamenServiceImpl implements IExamenService {
 
     @Override
     public Long obtenerIdCalificacionPorAlumnoYExamen(Long alumnoId, Long examenId) {
-        Optional<Calificacion> optionalCalificacion = Optional.ofNullable(calificacionRepository.findByExamenIdAndAlumnoId(examenId, alumnoId));
-
-        System.out.println("");
+        Optional<Calificacion> optionalCalificacion = calificacionRepository.findByAlumnoIdAndExamenId(alumnoId, examenId);
 
         if (optionalCalificacion.isPresent()) {
             Calificacion calificacion = optionalCalificacion.get();
-            return calificacion.getId();
-        } else {
+            CalificacionDTO calificacionDTO = examenDTOMapper.toCalificacionDTO(calificacion);
 
+            return calificacionDTO.getId();
+        } else {
             return null;
         }
     }
@@ -129,18 +98,21 @@ public class ExamenServiceImpl implements IExamenService {
         if (calificacionId != null) {
             Optional<Calificacion> optionalCalificacion = calificacionRepository.findById(calificacionId);
 
-            if (optionalCalificacion.isPresent()) {
-                System.out.println("NO ANDA NADA");
-                Calificacion calificacion = optionalCalificacion.get();
-                calificacion.setNota(nota);
-                return Optional.of(examenDTOMapper.toDTOcali(optionalCalificacion));
-            } else {
+            Calificacion calificacion = optionalCalificacion.get();
+            calificacion.setNota(nota);
 
-                return Optional.empty();
-            }
-        } else {
+            CalificacionDTO calificacionDTO = examenDTOMapper.toCalificacionDTO(calificacion);
 
-         return Optional.empty();
+            ExamenDTO examenDTO = examenDTOMapper.toDTO(calificacion.getExamen());
+            calificacionDTO.setExamen(examenDTO);
+
+            calificacionRepository.save(calificacion);
+
+            return Optional.of(calificacionDTO);
         }
+        return Optional.empty();
     }
+
+
+
 }

@@ -6,9 +6,6 @@ import com.mistica.EducarTransformar.model.DTO.request.ExamenCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Calificacion;
 import com.mistica.EducarTransformar.model.entity.Examen;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface IExamenDTOMapper {
@@ -17,6 +14,6 @@ public interface IExamenDTOMapper {
 
     Examen toDomain(ExamenCreationRequestDTO examenCreationRequestDTO);
 
+    CalificacionDTO toCalificacionDTO(Calificacion calificacion);
 
-    CalificacionDTO toDTOcali(Optional<Calificacion> calificacion);
 }

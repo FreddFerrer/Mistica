@@ -34,8 +34,4 @@ public class Examen {
     @OneToMany(mappedBy = "examen", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("examen")
     private List<Calificacion> calificaciones;
-
-    public Examen(Long examenId) {
-        this.id = examenId;
-    }
 }

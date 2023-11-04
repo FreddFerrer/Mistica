@@ -12,8 +12,9 @@ public interface IMateriaService {
     List<ListaMateriasDTO> getAll();
 
     List<MateriaDTO> getMateriasAsignadasAlDocente(Long docenteId);
+
     Optional<ListaMateriasDTO> getById(Long id);
-    Optional<Materia> getById2(Long id);
+
     ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materia);
     ListaMateriasDTO editarMateria(Long id, ListaMateriasDTO listaMateriasDTO);
     void deleteMateria(Long id);
@@ -24,4 +25,5 @@ public interface IMateriaService {
     List<MateriaDTO> getAllMateriasByAlumnoId(Long alumnoId);
 
     Optional<Materia> obtenerMateriaPorId(Long materiaId);
+
 }

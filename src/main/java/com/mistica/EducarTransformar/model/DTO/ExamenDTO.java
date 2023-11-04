@@ -7,7 +7,8 @@ import java.util.Date;
 @Data
 public class ExamenDTO {
 
-    private MateriaDTO materia;
+    private Long id;
     private String nombre;
     private Date fecha;
+    private MateriaDTO materia;
 }

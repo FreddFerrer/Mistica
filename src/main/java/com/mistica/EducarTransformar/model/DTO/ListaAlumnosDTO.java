@@ -16,5 +16,4 @@ public class ListaAlumnosDTO {
     private UsuarioDTO usuario;
     private List<MateriaDTO> materias;
     private List<PagoDTO> pagos;
-    private List<ExamenDTO> examenes;
 }

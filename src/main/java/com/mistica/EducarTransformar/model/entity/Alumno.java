@@ -57,7 +57,4 @@ public class Alumno {
 
     private boolean activo;
 
-    public Alumno(Long alumnoId) {
-        this.id = alumnoId;
-    }
 }

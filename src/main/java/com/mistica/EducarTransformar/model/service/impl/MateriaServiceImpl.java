@@ -57,11 +57,6 @@ public class MateriaServiceImpl implements IMateriaService {
         return materia.map(materiaMapper::toDTOList); // Convertir la entidad en DTO si existe
     }
 
-    @Override
-    public Optional<Materia> getById2(Long id) {
-        Optional<Materia> materia = materiaRepository.findById(id);
-        return materia;
-    }
 
     @Override
     public ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materiaDTO) {

@@ -11,15 +11,13 @@ import java.util.Optional;
 
 public interface IExamenService {
 
-
-    ExamenDTO crearExamenEnMateria(String nombreExamen, Long materiaId);
-
-
     Optional<Examen> obtenerById(Long materiaId);
 
     Examen crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId);
 
     Long obtenerIdCalificacionPorAlumnoYExamen(Long alumnoId, Long examenId);
 
-    Optional<CalificacionDTO> setearCalificacion(Long examenId, Long alumnoIdm, Double nota);
+    Optional<CalificacionDTO> setearCalificacion(Long alumnoId, Long examenId, Double nota);
+
+
 }

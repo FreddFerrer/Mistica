@@ -49,6 +49,18 @@ public class AlumnosController {
         return ResponseEntity.ok(alumnos);
     }
 
+    @GetMapping("/por-materia/{materiaId}")
+    public ResponseEntity<?> obtenerAlumnosPorMateria(@PathVariable Long materiaId) {
+        List<AlumnoDTO> alumnos = alumnoService.obtenerAlumnosPorMateria(materiaId);
+
+        if (!alumnos.isEmpty()) {
+            return new ResponseEntity<>(alumnos, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     // Crea un nuevo alumno solo accesible por el rol autoridad
     @PostMapping("/nuevo")
     @PreAuthorize("hasRole('ROLE_AUTORIDAD')")

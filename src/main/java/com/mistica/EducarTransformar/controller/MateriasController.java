@@ -7,6 +7,7 @@ import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.*;
 import com.mistica.EducarTransformar.model.DTO.request.ExamenCreationRequestDTO;
 import com.mistica.EducarTransformar.model.DTO.request.MateriaCreationRequestDTO;
+import com.mistica.EducarTransformar.model.DTO.request.SetearCalificacionRequestDTO;
 import com.mistica.EducarTransformar.model.entity.Calificacion;
 import com.mistica.EducarTransformar.model.entity.Examen;
 import com.mistica.EducarTransformar.model.mapper.IMateriaDTOMapper;
@@ -154,7 +155,7 @@ public class MateriasController {
         }
     }
 
-    @GetMapping("/obtener-id/{alumnoId}/{examenId}")
+    @GetMapping("/obtener-id/{examenId}/{alumnoId}")
     public ResponseEntity<?> obtenerIdCalificacion(
             @PathVariable Long alumnoId,
             @PathVariable Long examenId
@@ -170,18 +171,18 @@ public class MateriasController {
         }
     }
 
-    @PostMapping("/setear-calificacion/{examenId}/alumno/{alumnoId}")
+    @PutMapping("/setear-calificacion/{examenId}/alumno/{alumnoId}")
     public ResponseEntity<?> calificarAlumno(
-            @PathVariable Long examenId,
             @PathVariable Long alumnoId,
-            @RequestBody Double nota
+            @PathVariable Long examenId,
+            @Valid @RequestBody SetearCalificacionRequestDTO nota
 
     ) {
-        System.out.println("examenId: " + examenId);
-        System.out.println("alumnoId: " + alumnoId);
-        System.out.println("nota: " + nota);
+        if (nota == null) {
+            return new ResponseEntity<>("La calificación no puede ser nula.", HttpStatus.BAD_REQUEST);
+        }
 
-        Optional<CalificacionDTO> calificacion = examenService.setearCalificacion(alumnoId, examenId, nota);
+        Optional<CalificacionDTO> calificacion = examenService.setearCalificacion(alumnoId, examenId, nota.getNota());
 
         System.out.println(calificacion);
 
