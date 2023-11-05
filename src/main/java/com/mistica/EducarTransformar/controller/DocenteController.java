@@ -3,6 +3,7 @@ package com.mistica.EducarTransformar.controller;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.DocenteDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaDocentesDTO;
+import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.DTO.request.DocenteCreationRequestDTO;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
@@ -90,8 +91,8 @@ public class DocenteController {
             @PathVariable Long docenteId
     ) {
         try {
-            usuarioService.asignarDocenteAMateria(materiaId, docenteId);
-            return ResponseEntity.ok("Docente agregado exitosamente a la materia.");
+            MateriaDTO materia = usuarioService.asignarDocenteAMateria(materiaId, docenteId);
+            return ResponseEntity.ok(materia);
         } catch (NotFoundException e) {
             // Manejo de la excepción si la materia o el alumno no se encuentran
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

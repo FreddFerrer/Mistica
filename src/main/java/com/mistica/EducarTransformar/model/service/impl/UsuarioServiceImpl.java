@@ -3,6 +3,7 @@ package com.mistica.EducarTransformar.model.service.impl;
 import com.mistica.EducarTransformar.common.handler.NotFoundException;
 import com.mistica.EducarTransformar.model.DTO.DocenteDTO;
 import com.mistica.EducarTransformar.model.DTO.ListaDocentesDTO;
+import com.mistica.EducarTransformar.model.DTO.MateriaDTO;
 import com.mistica.EducarTransformar.model.DTO.UsuarioDTO;
 import com.mistica.EducarTransformar.model.entity.Materia;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
@@ -84,7 +85,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public void asignarDocenteAMateria(Long materiaId, Long docenteId) {
+    public MateriaDTO asignarDocenteAMateria(Long materiaId, Long docenteId) {
         // Obtener la materia y el docente de la base de datos
         Optional<Materia> materiaExistente = materiaRepository.findById(materiaId);
         Optional<Usuario> docenteExistente = usuarioRepository.findById(docenteId);
@@ -98,6 +99,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
             // Guardar la materia actualizada
             materiaRepository.save(materia);
+
+            return  usuarioDTOMapper.materiaToMateriaDTO(materia);
         } else {
 
             throw new NotFoundException("La materia o el docente solicitado no existen.");
