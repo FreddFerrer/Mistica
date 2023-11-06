@@ -125,8 +125,8 @@ public class MateriasController {
             @PathVariable Long alumnoId
     ) {
         try {
-            materiaService.agregarAlumnoAMateria(materiaId, alumnoId);
-            return ResponseEntity.ok("Alumno agregado exitosamente a la materia.");
+            MateriaDTO materia =  materiaService.agregarAlumnoAMateria(materiaId, alumnoId);
+            return ResponseEntity.ok(materia);
         } catch (NotFoundException e) {
             // Manejo de la excepción si la materia o el alumno no se encuentran
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

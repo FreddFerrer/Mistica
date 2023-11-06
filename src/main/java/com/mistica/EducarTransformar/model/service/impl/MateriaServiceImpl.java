@@ -94,7 +94,7 @@ public class MateriaServiceImpl implements IMateriaService {
     }
 
     @Override
-    public void agregarAlumnoAMateria(Long materiaId, Long alumnoId) {
+    public MateriaDTO agregarAlumnoAMateria(Long materiaId, Long alumnoId) {
         Optional<Materia> materiaOptional = materiaRepository.findById(materiaId);
         Optional<Alumno> alumnoOptional = alumnoRepository.findById(alumnoId);
 
@@ -117,6 +117,7 @@ public class MateriaServiceImpl implements IMateriaService {
         } else {
             throw new NotFoundException("Materia o Alumno no encontrado.");
         }
+        return null;
     }
 
     @Override

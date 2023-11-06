@@ -18,7 +18,7 @@ public interface IMateriaService {
     ListaMateriasDTO agregarMateria(MateriaCreationRequestDTO materia);
     ListaMateriasDTO editarMateria(Long id, ListaMateriasDTO listaMateriasDTO);
     void deleteMateria(Long id);
-    void agregarAlumnoAMateria(Long materiaId, Long alumnoId);
+    MateriaDTO agregarAlumnoAMateria(Long materiaId, Long alumnoId);
 
     List<ListaMateriasDTO> getAllByDocente(Long idDocente);
 
