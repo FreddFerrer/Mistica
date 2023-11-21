@@ -13,7 +13,7 @@ public interface IExamenService {
 
     Optional<Examen> obtenerById(Long materiaId);
 
-    Examen crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId);
+    ExamenDTO crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId);
 
     Long obtenerIdCalificacionPorAlumnoYExamen(Long alumnoId, Long examenId);
 

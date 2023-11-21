@@ -142,16 +142,16 @@ public class MateriasController {
             @PathVariable Long materiaId,
             @RequestBody ExamenCreationRequestDTO examenDTO) {
 
-        Examen examenCreado = examenService.crearExamenEnMateria(
+        ExamenDTO examenCreado = examenService.crearExamenEnMateria(
                 examenDTO.getNombre(),
                 examenDTO.getFecha(),
                 materiaId
         );
 
         if (examenCreado != null) {
-            return ResponseEntity.ok("Examen creado exitosamente.");
+            return ResponseEntity.ok(examenCreado);
         } else {
-            return ResponseEntity.badRequest().body("No se pudo crear el examen. La materia no existe.");
+            return ResponseEntity.badRequest().build();
         }
     }
 

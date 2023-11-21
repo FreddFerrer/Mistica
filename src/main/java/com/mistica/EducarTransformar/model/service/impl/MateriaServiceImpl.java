@@ -129,6 +129,7 @@ public class MateriaServiceImpl implements IMateriaService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public List<MateriaDTO> getAllMateriasByAlumnoId(Long alumnoId) {
         alumnoId = alumnoRepository.findAlumnoIdByUsuarioId(alumnoId);

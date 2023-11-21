@@ -46,7 +46,7 @@ public class ExamenServiceImpl implements IExamenService {
     }
 
     @Override
-    public Examen crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId) {
+    public ExamenDTO crearExamenEnMateria(String nombreExamen, Date fechaExamen, Long materiaId) {
         Materia materia = materiaService.obtenerMateriaPorId(materiaId)
                 .orElseThrow(() -> new NotFoundException("Materia no encontrada"));
 
@@ -66,7 +66,8 @@ public class ExamenServiceImpl implements IExamenService {
             }
 
             examen.setCalificaciones(calificaciones);
-            return examenRepository.save(examen);
+            Examen examenCreado = examenRepository.save(examen);
+            return examenDTOMapper.toDTO(examenCreado);
         }
 
         return null;

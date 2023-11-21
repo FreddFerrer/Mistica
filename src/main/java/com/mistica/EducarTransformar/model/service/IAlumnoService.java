@@ -28,5 +28,5 @@ public interface IAlumnoService {
     void establecerAsistencia(Long alumnoId, Long id, AsistenciaDTO asistenciaDTO);
 
 
-    List<AlumnoDTO> obtenerAlumnosPorMateria(Long materiaId);
+    List<ListaAlumnosDTO> obtenerAlumnosPorMateria(Long materiaId);
 }

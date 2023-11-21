@@ -3,6 +3,8 @@ package com.mistica.EducarTransformar.model.DTO;
 import com.mistica.EducarTransformar.model.entity.RolUsuario;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AlumnoDTO {
     private Integer legajo;

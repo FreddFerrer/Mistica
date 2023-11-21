@@ -20,6 +20,8 @@ public interface IMateriaDTOMapper {
 
     ListaMateriasDTO toDTOWithAlumnos(Materia listaMateriasDTO, List<Alumno> alumnos);
 
+    ListaMateriasDTO toDTOWithAlumnosAndCalificaciones(Materia materia, List<Alumno> alumnos);
+
     @InheritInverseConfiguration
     Materia toDomain(ListaMateriasDTO listaMateriasDTO);
 

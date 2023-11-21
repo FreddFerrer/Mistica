@@ -4,6 +4,7 @@ import com.mistica.EducarTransformar.model.entity.Calificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -12,4 +13,5 @@ public interface ICalificacionRepository extends JpaRepository<Calificacion, Lon
 
     Optional<Calificacion> findByAlumnoIdAndExamenId(Long alumnoId, Long examenId);
 
+    List<Calificacion> findByAlumnoId(Long alumnoId);
 }

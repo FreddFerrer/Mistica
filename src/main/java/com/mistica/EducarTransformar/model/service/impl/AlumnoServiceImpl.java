@@ -8,6 +8,7 @@ import com.mistica.EducarTransformar.model.entity.*;
 import com.mistica.EducarTransformar.model.mapper.IAlumnoDTOMapper;
 import com.mistica.EducarTransformar.model.repository.IAlumnoRepository;
 import com.mistica.EducarTransformar.model.repository.IAsistenciaRepository;
+import com.mistica.EducarTransformar.model.repository.ICalificacionRepository;
 import com.mistica.EducarTransformar.model.repository.IMateriaRepository;
 import com.mistica.EducarTransformar.model.service.IAlumnoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class AlumnoServiceImpl implements IAlumnoService {
     @Autowired
     private IMateriaRepository materiaRepository;
     @Autowired
+    private ICalificacionRepository calificacionRepository;
+    @Autowired
     private IAsistenciaRepository asistenciaRepository;
     @Autowired
     private IAlumnoDTOMapper alumnoMapper;
@@ -39,7 +42,15 @@ public class AlumnoServiceImpl implements IAlumnoService {
     @Override
     public List<ListaAlumnosDTO> obtenerAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
-        return alumnoMapper.toDTOs(alumnos);
+        List<ListaAlumnosDTO> listaAlumnosDTOs = alumnoMapper.toDTOs(alumnos);
+
+        for (ListaAlumnosDTO listaAlumnosDTO : listaAlumnosDTOs) {
+            Long alumnoId = listaAlumnosDTO.getId();
+            List<Calificacion> calificaciones = calificacionRepository.findByAlumnoId(alumnoId);
+            listaAlumnosDTO.setCalificaciones(alumnoMapper.toCalificacionDTOList(calificaciones));
+        }
+
+        return listaAlumnosDTOs;
     }
 
 
@@ -112,10 +123,18 @@ public class AlumnoServiceImpl implements IAlumnoService {
     }
 
     @Override
-    public List<AlumnoDTO> obtenerAlumnosPorMateria(Long materiaId) {
-        List<Alumno> alumno =  alumnoRepository.findAlumnosByMateriaId(materiaId);
+    public List<ListaAlumnosDTO> obtenerAlumnosPorMateria(Long materiaId) {
+        List<Alumno> alumnos =  alumnoRepository.findAlumnosByMateriaId(materiaId);
 
-        return alumnoMapper.toDTOsingular(alumno);
+        List<ListaAlumnosDTO> listaAlumnosDTOs = alumnoMapper.toDTOs(alumnos);
+
+        for (ListaAlumnosDTO listaAlumnosDTO : listaAlumnosDTOs) {
+            Long alumnoId = listaAlumnosDTO.getId();
+            List<Calificacion> calificaciones = calificacionRepository.findByAlumnoId(alumnoId);
+            listaAlumnosDTO.setCalificaciones(alumnoMapper.toCalificacionDTOList(calificaciones));
+        }
+
+        return listaAlumnosDTOs;
     }
 
 

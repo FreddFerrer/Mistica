@@ -51,7 +51,7 @@ public class AlumnosController {
 
     @GetMapping("/por-materia/{materiaId}")
     public ResponseEntity<?> obtenerAlumnosPorMateria(@PathVariable Long materiaId) {
-        List<AlumnoDTO> alumnos = alumnoService.obtenerAlumnosPorMateria(materiaId);
+        List<ListaAlumnosDTO> alumnos = alumnoService.obtenerAlumnosPorMateria(materiaId);
 
         if (!alumnos.isEmpty()) {
             return new ResponseEntity<>(alumnos, HttpStatus.OK);
